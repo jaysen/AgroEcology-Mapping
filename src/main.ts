@@ -84,7 +84,7 @@ projects.forEach(project => {
     });
 
   // Optional: Open popup on hover for better UX
-  marker.on('mouseover', function() {
+  marker.on('mouseover', function(this: L.Marker) {
     this.openPopup();
   });
 });
