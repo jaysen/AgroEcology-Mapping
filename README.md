@@ -27,6 +27,18 @@ npm run dev
 
 The app will be available at `http://localhost:5173`
 
+## Deployment
+
+### Deploy to GitHub Pages
+
+```bash
+# One-time setup: push to GitHub first
+# Then deploy with:
+GITHUB_PAGES=true npm run deploy
+```
+
+📖 **Full deployment guide**: See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions
+
 ### 4. Build for production
 ```bash
 npm run build
