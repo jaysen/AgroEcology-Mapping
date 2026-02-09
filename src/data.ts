@@ -5,7 +5,7 @@ export const projects: AgroEcologyProject[] = [
     id: 1,
     name: "Philippi Horticultural Area Urban Farming Initiative",
     location: {
-      lat: -33.9897,
+      lat: -33.9378,
       lng: 18.5635,
       place: "Philippi",
       region: "Western Cape",
@@ -25,8 +25,8 @@ export const projects: AgroEcologyProject[] = [
     id: 2,
     name: "Eastern Cape Smallholder Agroforestry Network",
     location: {
-      lat: -32.2968,
-      lng: 26.4194,
+      lat: -33.9478,
+      lng: 18.5835,
       place: "Keiskammahoek",
       region: "Eastern Cape",
       country: "South Africa"
