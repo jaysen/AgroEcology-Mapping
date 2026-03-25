@@ -4,6 +4,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 1,
     name: "Philippi Horticultural Area Urban Farming Initiative",
+    category: 'LS',
     location: {
       lat: -33.9378,
       lng: 18.5635,
@@ -24,6 +25,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 2,
     name: "Eastern Cape Smallholder Agroforestry Network",
+    category: 'CC',
     location: {
       lat: -33.9478,
       lng: 18.5835,
@@ -45,6 +47,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 3,
     name: "Limpopo Regenerative Agriculture Hub",
+    category: 'AEH',
     location: {
       lat: -23.4013,
       lng: 29.4179,
@@ -66,6 +69,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 4,
     name: "KwaZulu-Natal Community Seed Bank",
+    category: 'LH',
     location: {
       lat: -29.6144,
       lng: 30.3794,
@@ -86,6 +90,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 5,
     name: "Zambezi Valley Organic Cotton Project",
+    category: 'LS',
     location: {
       lat: -15.6257,
       lng: 28.2833,
@@ -106,6 +111,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 6,
     name: "Maputo Green Belt Initiative",
+    category: 'CC',
     location: {
       lat: -25.9655,
       lng: 32.5832,
@@ -126,6 +132,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 7,
     name: "Mashonaland Permaculture Training Center",
+    category: 'AEH',
     location: {
       lat: -17.8252,
       lng: 31.0335,
@@ -147,6 +154,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 8,
     name: "Free State Climate-Smart Agriculture Pilot",
+    category: 'LH',
     location: {
       lat: -28.4541,
       lng: 26.8668,
