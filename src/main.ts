@@ -112,7 +112,7 @@ projects.forEach(project => {
       className: 'custom-popup',
     });
 
-  marker.on('mouseover', function(this: L.Marker) {
+  marker.on('click', function(this: L.Marker) {
     this.openPopup();
   });
 });
