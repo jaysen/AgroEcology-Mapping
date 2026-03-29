@@ -259,6 +259,15 @@ footer a:hover {
   font-size: 1.3rem;
 }
 
+.app-version {
+  position: absolute;
+  bottom: 0.4rem;
+  right: 1rem;
+  font-size: 0.7rem;
+  color: #999;
+  z-index: 1000;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   header {
