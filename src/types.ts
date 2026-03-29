@@ -18,22 +18,27 @@ export interface AgroEcologyProject {
   id: number;
   name: string;
   category: PointCategory;
+  contact: string;
+  province: string;
+  district: string;
+  nearestTown: string;
   location: {
     lat: number;
     lng: number;
-    place: string;
-    region: string;
-    country: string;
   };
-  description: string;
-  type: string;
-  practices: string[];
-  established: number;
-  size_hectares: number;
-  beneficiaries: number;
-  crops: string[];
-  organization: string;
-  contact?: string;
-  website?: string;
-  status: 'active' | 'pilot' | 'completed';
+  yearStarted: number;
+  // Attributes (Y = true, blank = false)
+  highOnFarmDiversity: boolean;
+  mixedFarming: boolean;
+  seedBankIndividual: boolean;
+  seedBankCollective: boolean;
+  organisedSeedExchange: boolean;
+  integratedLandscapeManagement: boolean;
+  onSiteTraining: boolean;
+  structuredTrainingProgrammes: boolean;
+  trainingType: string;       // S, I, L or combinations
+  trainingAccreditation: boolean;
+  gsInputSupply: boolean;
+  gsMentorshipTechSupport: boolean;
+  gsMarketingServices: boolean;
 }
