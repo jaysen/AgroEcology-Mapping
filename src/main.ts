@@ -56,47 +56,68 @@ function createPopupContent(project: AgroEcologyProject): string {
   const cat = POINT_CATEGORIES[project.category];
   const categoryBadge = `<span class="category-badge" style="background:${cat.color};color:${cat.textColor}">${cat.code} — ${cat.label}</span>`;
 
+  const yesNo = (val: boolean) => val ? 'Yes' : '—';
+
+  const trainingTypeLabel: Record<string, string> = {
+    S: 'Short (<7 days)',
+    I: 'Intermediate (1 wk–6 mo)',
+    L: 'Long (>6 mo)',
+  };
+  const trainingTypeDisplay = project.trainingType
+    ? project.trainingType.split(' ').map(t => trainingTypeLabel[t] ?? t).join(', ')
+    : '—';
+
+  const attributes = [
+    ['High on-farm diversity',          project.highOnFarmDiversity],
+    ['Mixed farming',                   project.mixedFarming],
+    ['Seed bank (individual)',          project.seedBankIndividual],
+    ['Seed bank (collective)',          project.seedBankCollective],
+    ['Organised seed exchange',         project.organisedSeedExchange],
+    ['Integrated landscape management', project.integratedLandscapeManagement],
+  ] as [string, boolean][];
+
+  const activeAttributes = attributes.filter(([, v]) => v).map(([label]) => label);
+
+  const services = [
+    ['Input supply',           project.gsInputSupply],
+    ['Mentorship/tech support', project.gsMentorshipTechSupport],
+    ['Marketing services',     project.gsMarketingServices],
+  ] as [string, boolean][];
+
+  const activeServices = services.filter(([, v]) => v).map(([label]) => label);
+
   return `
     <div class="popup-content">
       <h3>${project.name}</h3>
       ${categoryBadge}
       <div class="popup-section">
-        <strong>Location:</strong> ${project.location.place}, ${project.location.region}, ${project.location.country}
+        <strong>Location:</strong> ${project.nearestTown}, ${project.district}, ${project.province}
       </div>
       <div class="popup-section">
-        <strong>Type:</strong> ${project.type}
+        <strong>Contact:</strong> ${project.contact}
       </div>
       <div class="popup-section">
-        <strong>Description:</strong>
-        <p>${project.description}</p>
+        <strong>Year started:</strong> ${project.yearStarted}
       </div>
+      ${activeAttributes.length ? `
       <div class="popup-section">
-        <strong>Practices:</strong>
+        <strong>Attributes:</strong>
         <ul class="practices-list">
-          ${project.practices.map(p => `<li>${p}</li>`).join('')}
+          ${activeAttributes.map(a => `<li>${a}</li>`).join('')}
         </ul>
-      </div>
+      </div>` : ''}
       <div class="popup-section">
-        <strong>Key Crops:</strong> ${project.crops.join(', ')}
+        <strong>On-site training:</strong> ${yesNo(project.onSiteTraining)}
       </div>
-      <div class="popup-stats">
-        <div class="stat">
-          <span class="stat-label">Established</span>
-          <span class="stat-value">${project.established}</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Size</span>
-          <span class="stat-value">${project.size_hectares} ha</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Beneficiaries</span>
-          <span class="stat-value">${project.beneficiaries}</span>
-        </div>
-      </div>
+      ${project.structuredTrainingProgrammes ? `
       <div class="popup-section">
-        <strong>Organization:</strong> ${project.organization}
-      </div>
-      ${project.website ? `<div class="popup-section"><a href="${project.website}" target="_blank">Visit Website →</a></div>` : ''}
+        <strong>Structured training:</strong> ${trainingTypeDisplay}
+        ${project.trainingAccreditation ? ' · Accredited' : ''}
+      </div>` : ''}
+      ${activeServices.length ? `
+      <div class="popup-section">
+        <strong>Goods &amp; Services:</strong> ${activeServices.join(', ')}
+      </div>` : ''}
     </div>
   `;
 }

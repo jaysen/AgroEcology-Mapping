@@ -1,6 +1,7 @@
 # Claude Code Instructions
 
 ## Project Spec
+
 Always read [docs/ProjectSpec.md](docs/ProjectSpec.md) at the start of each conversation for full project context and requirements.
 
 ## Data Files
