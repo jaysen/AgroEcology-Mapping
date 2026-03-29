@@ -143,13 +143,25 @@ const Legend = L.Control.extend({
   onAdd() {
     const div = L.DomUtil.create('div', 'map-legend');
     div.innerHTML = `
-      <h4>Point Categories</h4>
-      ${Object.values(POINT_CATEGORIES).map(cat => `
-        <div class="legend-item">
-          <span class="legend-dot" style="background:${cat.color}"></span>
-          <span><strong>${cat.code}</strong> ${cat.label}</span>
-        </div>`).join('')}
+      <h4>
+        Point Categories
+        <button class="legend-toggle" aria-label="Collapse legend">▾</button>
+      </h4>
+      <div class="legend-body">
+        ${Object.values(POINT_CATEGORIES).map(cat => `
+          <div class="legend-item">
+            <span class="legend-dot" style="background:${cat.color}"></span>
+            <span><strong>${cat.code}</strong> ${cat.label}</span>
+          </div>`).join('')}
+      </div>
     `;
+    const btn = div.querySelector<HTMLButtonElement>('.legend-toggle')!;
+    const body = div.querySelector<HTMLDivElement>('.legend-body')!;
+    L.DomEvent.on(btn, 'click', () => {
+      const collapsed = body.classList.toggle('legend-collapsed');
+      btn.textContent = collapsed ? '▸' : '▾';
+      btn.setAttribute('aria-label', collapsed ? 'Expand legend' : 'Collapse legend');
+    });
     return div;
   },
 });
