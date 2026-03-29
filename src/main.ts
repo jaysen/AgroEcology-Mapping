@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { projects } from './data';
 import { AgroEcologyProject, PointCategory, POINT_CATEGORIES } from './types';
+import { version } from '../package.json';
 import './style.css';
 
 // Fix for default marker icons in Leaflet with bundlers
@@ -172,5 +173,11 @@ const counter = document.createElement('div');
 counter.className = 'projects-counter';
 counter.innerHTML = `<strong>${projects.length}</strong> Projects Mapped`;
 document.getElementById('app')?.appendChild(counter);
+
+// Version footer
+const footer = document.createElement('div');
+footer.className = 'app-version';
+footer.textContent = `v${version}`;
+document.getElementById('app')?.appendChild(footer);
 
 console.log(`Loaded ${projects.length} agroecology projects`);
