@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { projects } from './data';
 import { AgroEcologyProject, PointCategory, POINT_CATEGORIES } from './types';
+import { fuzzLocation } from './fuzzLocation';
 import { version } from '../package.json';
 import './style.css';
 
@@ -125,7 +126,8 @@ function createPopupContent(project: AgroEcologyProject): string {
 
 // Add markers
 projects.forEach(project => {
-  const marker = L.marker([project.location.lat, project.location.lng], {
+  const { lat, lng } = fuzzLocation(project.location, { seed: `project-${project.id}` });
+  const marker = L.marker([lat, lng], {
     icon: categoryIcons[project.category],
   })
     .addTo(map)

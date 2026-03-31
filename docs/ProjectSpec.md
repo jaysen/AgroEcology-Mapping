@@ -27,7 +27,6 @@ Interactive map application for displaying and managing agroecology case studies
   - Precise addresses are never stored or displayed
   - Edge cases handled: boundary coordinates, clustering behaviour
 
-
 ### 3. Data Structure
 
 - ~102 total cases (source: `Map data FINAL 10Mar26.xlsx`)
