@@ -23,7 +23,7 @@ Interactive map application for displaying and managing agroecology case studies
 - Popup to use field icons, that will be described in legend.
 - Pins must not be geo-precise
   - We don't want people to be able to find the sometimes private farms running the project without contacting the project first.
-  - Coordinate fuzzing with configurable obfuscation radius (default ±3 km)
+  - Coordinate fuzzing with configurable annulus (default min 2 km, max 5 km) — pins always land between min and max from the true location
   - Precise addresses are never stored or displayed
   - Edge cases handled: boundary coordinates, clustering behaviour
 
@@ -44,8 +44,8 @@ Interactive map application for displaying and managing agroecology case studies
 | 5 | Province | |
 | 6 | District | |
 | 7 | Name of nearest town | |
-| 8 | Geolocation latitude | Obfuscated ±3 km before display |
-| 8 | Geolocation longitude | Obfuscated ±3 km before display |
+| 8 | Geolocation latitude | Obfuscated [2, 5] km annulus before display |
+| 8 | Geolocation longitude | Obfuscated [2, 5] km annulus before display |
 | 9 | Year initiative started | |
 | — | High on-farm diversity | Y/blank |
 | — | Mixed farming | Y/blank |
@@ -175,7 +175,7 @@ The application must support the following deployment scenarios:
 
 ### Phase 4: Embed, Theming & Obfuscation
 
-- [ ] Map location obfuscation (coordinate fuzzing, ±3 km default radius, edge-case testing)
+- [x] Map location obfuscation (coordinate fuzzing, annulus [2, 5] km default, edge-case testing, unit tests) — see `src/fuzzLocation.ts`
 - [ ] Define query-string config param spec (initial centre, zoom, country filter, etc.) — *must be done before embed build config*
 - [ ] Add `vite.config.embed.ts` second build target:
   - Self-contained bundle with no external font/icon CDN dependencies

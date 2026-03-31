@@ -1,12 +1,32 @@
 /**
  * Coordinate fuzzing for geolocation privacy.
  *
- * Pins must not be geo-precise — exact farm/project locations are private.
- * Applies a random offset within a configurable radius (default ±3 km) using
- * a uniform-disk distribution so offsets are spread evenly, not biased toward
- * the centre.
+ * Farm and project locations are private. Pins on the public map must never
+ * reveal a precise address. This module displaces every coordinate by a random
+ * offset that falls within a configurable annulus [FUZZ_RADIUS_MIN_KM,
+ * FUZZ_RADIUS_MAX_KM], guaranteeing the pin is always meaningfully far from
+ * the true location but still within a recognisable area.
  *
- * Spec ref: ProjectSpec.md §1 "Pins must not be geo-precise"
+ * ## Distribution
+ * Offsets are drawn from a uniform-area annulus (not a full disk). The radius
+ * is sampled as r = sqrt(lerp(min², max², u)) so that area is evenly covered
+ * — no clustering near the inner or outer edge. Direction (theta) is uniform
+ * over [0, 2π).
+ *
+ * ## Determinism & pin stability
+ * When a `seed` string is supplied, a mulberry32 PRNG is used instead of
+ * Math.random. The same seed always produces the same offset, so pins do not
+ * jump between page reloads. This means the direction from origin → fuzzed pin
+ * is fixed per seed — an acceptable trade-off for UX stability. If pin
+ * direction stability is a concern, omit the seed (random each load) or rotate
+ * the seed on a schedule (e.g. weekly).
+ *
+ * ## Edge cases
+ * - Latitude is clamped to [-90, 90] after displacement.
+ * - Longitude is wrapped to [-180, 180] after displacement.
+ * - Throws if minRadiusKm >= radiusKm.
+ *
+ * Spec ref: ProjectSpec.md §1 "Pins must not be geo-precise", §4 obfuscation.
  */
 
 export interface LatLng {
@@ -15,13 +35,14 @@ export interface LatLng {
 }
 
 export interface FuzzOptions {
-  /** Maximum obfuscation radius in kilometres. Default: 3 */
+  /** Maximum displacement in kilometres. Defaults to FUZZ_RADIUS_MAX_KM. */
   radiusKm?: number;
-  /** Minimum obfuscation radius in kilometres. Default: 1.
-   *  Ensures pins are never placed too close to the real location. */
+  /** Minimum displacement in kilometres. Defaults to FUZZ_RADIUS_MIN_KM.
+   *  Must be > 0 and < radiusKm — enforces a hard privacy floor. */
   minRadiusKm?: number;
-  /** Optional seed string for deterministic fuzzing (same input → same output).
-   *  Useful for stable pin positions across page reloads without storing fuzzed coords. */
+  /** Seed string for deterministic output (same seed → same offset every call).
+   *  Pin direction is fixed per seed — see module doc for trade-off discussion.
+   *  Omit to use Math.random (different offset each call). */
   seed?: string;
 }
 
@@ -57,13 +78,8 @@ function makeSeededRng(seed: string): () => number {
 }
 
 /**
- * Apply a random offset to a coordinate, keeping it within `radiusKm`.
- * Uses a uniform-disk distribution (square-root of uniform radius) to avoid
- * clustering near the centre.
- *
- * Edge cases handled:
- * - Latitude is clamped to [-90, 90]
- * - Longitude is wrapped to [-180, 180]
+ * Displace a single coordinate by a random offset within the annulus
+ * [minRadiusKm, radiusKm]. Returns a new LatLng; the input is not modified.
  */
 export function fuzzLocation(coords: LatLng, options: FuzzOptions = {}): LatLng {
   const maxRadiusKm = options.radiusKm ?? FUZZ_RADIUS_MAX_KM;
@@ -100,8 +116,9 @@ export function fuzzLocation(coords: LatLng, options: FuzzOptions = {}): LatLng 
 }
 
 /**
- * Fuzz an array of coordinates, each with a unique deterministic seed derived
- * from a base seed + index. Useful for stable map pins across reloads.
+ * Displace an array of coordinates, each with an independent offset.
+ * When a seed is provided, each entry's seed is derived as `${seed}:${index}`
+ * so every pin lands in a different spot while remaining individually stable.
  */
 export function fuzzLocations(
   coords: LatLng[],
