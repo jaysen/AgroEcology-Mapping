@@ -15,8 +15,11 @@ export interface LatLng {
 }
 
 export interface FuzzOptions {
-  /** Obfuscation radius in kilometres. Default: 3 */
+  /** Maximum obfuscation radius in kilometres. Default: 3 */
   radiusKm?: number;
+  /** Minimum obfuscation radius in kilometres. Default: 1.
+   *  Ensures pins are never placed too close to the real location. */
+  minRadiusKm?: number;
   /** Optional seed string for deterministic fuzzing (same input → same output).
    *  Useful for stable pin positions across page reloads without storing fuzzed coords. */
   seed?: string;
@@ -56,14 +59,22 @@ function makeSeededRng(seed: string): () => number {
  * - Longitude is wrapped to [-180, 180]
  */
 export function fuzzLocation(coords: LatLng, options: FuzzOptions = {}): LatLng {
-  const radiusKm = options.radiusKm ?? 3;
+  const maxRadiusKm = options.radiusKm ?? 3;
+  const minRadiusKm = options.minRadiusKm ?? 1;
+
+  if (minRadiusKm >= maxRadiusKm) {
+    throw new Error(`minRadiusKm (${minRadiusKm}) must be less than radiusKm (${maxRadiusKm})`);
+  }
 
   const rng = options.seed !== undefined
     ? makeSeededRng(options.seed)
     : Math.random;
 
-  // Uniform-disk: sqrt gives uniform area distribution
-  const r = radiusKm * Math.sqrt(rng());
+  // Uniform-disk over an annulus [minRadiusKm, maxRadiusKm]:
+  // r = sqrt(lerp(min², max², u)) ensures uniform area distribution within the ring.
+  const minSq = minRadiusKm * minRadiusKm;
+  const maxSq = maxRadiusKm * maxRadiusKm;
+  const r = Math.sqrt(minSq + rng() * (maxSq - minSq));
   const theta = rng() * 2 * Math.PI;
 
   // Convert km offset to degrees

@@ -20,29 +20,35 @@ function haversineKm(a: { lat: number; lng: number }, b: { lat: number; lng: num
 const EASTERN_CAPE = { lat: -32.47, lng: 28.19 };
 
 describe('fuzzLocation', () => {
-  describe('offset is within the configured radius', () => {
-    it('stays within default 3 km radius', () => {
+  describe('offset is within the configured radius annulus', () => {
+    it('stays within default max (3 km) and above default min (1 km)', () => {
       for (let i = 0; i < 100; i++) {
         const fuzzed = fuzzLocation(EASTERN_CAPE);
         const dist = haversineKm(EASTERN_CAPE, fuzzed);
         expect(dist).toBeLessThanOrEqual(3);
+        expect(dist).toBeGreaterThanOrEqual(1);
       }
     });
 
-    it('stays within a custom radius', () => {
+    it('respects custom min and max radius', () => {
       for (let i = 0; i < 100; i++) {
-        const fuzzed = fuzzLocation(EASTERN_CAPE, { radiusKm: 10 });
+        const fuzzed = fuzzLocation(EASTERN_CAPE, { minRadiusKm: 2, radiusKm: 10 });
         const dist = haversineKm(EASTERN_CAPE, fuzzed);
         expect(dist).toBeLessThanOrEqual(10);
+        expect(dist).toBeGreaterThanOrEqual(2);
       }
     });
 
-    it('stays within a small 0.5 km radius', () => {
-      for (let i = 0; i < 100; i++) {
-        const fuzzed = fuzzLocation(EASTERN_CAPE, { radiusKm: 0.5 });
-        const dist = haversineKm(EASTERN_CAPE, fuzzed);
-        expect(dist).toBeLessThanOrEqual(0.5);
-      }
+    it('seeded result also obeys the annulus', () => {
+      const fuzzed = fuzzLocation(EASTERN_CAPE, { seed: 'project-42', minRadiusKm: 1, radiusKm: 3 });
+      const dist = haversineKm(EASTERN_CAPE, fuzzed);
+      expect(dist).toBeLessThanOrEqual(3);
+      expect(dist).toBeGreaterThanOrEqual(1);
+    });
+
+    it('throws if minRadiusKm >= radiusKm', () => {
+      expect(() => fuzzLocation(EASTERN_CAPE, { minRadiusKm: 3, radiusKm: 3 })).toThrow();
+      expect(() => fuzzLocation(EASTERN_CAPE, { minRadiusKm: 5, radiusKm: 3 })).toThrow();
     });
   });
 
@@ -75,24 +81,12 @@ describe('fuzzLocation', () => {
       expect(allSame).toBe(false);
     });
 
-    it('median offset over 500 draws is at least 1 km (uniform-disk expected value is 2 km)', () => {
-      // For a uniform disk of radius R, E[distance] = 2R/3 ≈ 2 km.
-      // We assert the median exceeds 1 km as a conservative lower bound,
-      // ensuring pins are never trivially close to the true location.
-      const distances = Array.from({ length: 500 }, () =>
-        haversineKm(EASTERN_CAPE, fuzzLocation(EASTERN_CAPE))
-      ).sort((a, b) => a - b);
-      const median = distances[Math.floor(distances.length / 2)];
-      expect(median).toBeGreaterThan(1);
-    });
-
-    it('at least 95% of offsets exceed 0.3 km', () => {
-      // Ensures the distribution does not degenerate near the origin.
+    it('every offset is at least 1 km (hard minimum enforced)', () => {
       const distances = Array.from({ length: 500 }, () =>
         haversineKm(EASTERN_CAPE, fuzzLocation(EASTERN_CAPE))
       );
-      const nearOrigin = distances.filter((d) => d < 0.3).length;
-      expect(nearOrigin / distances.length).toBeLessThan(0.05);
+      const tooClose = distances.filter((d) => d < 1).length;
+      expect(tooClose).toBe(0);
     });
   });
 
