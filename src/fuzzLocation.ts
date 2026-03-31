@@ -27,6 +27,13 @@ export interface FuzzOptions {
 
 const EARTH_RADIUS_KM = 6371;
 
+// ─── Fuzzing radius defaults (kilometres) ────────────────────────────────────
+// Adjust these to tune how far pins are displaced from true coordinates.
+// MIN must be > 0 and < MAX.
+export const FUZZ_RADIUS_MIN_KM = 1;   // closest a pin can land to the real location
+export const FUZZ_RADIUS_MAX_KM = 3;   // furthest a pin can land from the real location
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
  * Simple deterministic pseudo-random number generator (mulberry32).
  * Returns a function that yields values in [0, 1).
@@ -59,8 +66,8 @@ function makeSeededRng(seed: string): () => number {
  * - Longitude is wrapped to [-180, 180]
  */
 export function fuzzLocation(coords: LatLng, options: FuzzOptions = {}): LatLng {
-  const maxRadiusKm = options.radiusKm ?? 3;
-  const minRadiusKm = options.minRadiusKm ?? 1;
+  const maxRadiusKm = options.radiusKm ?? FUZZ_RADIUS_MAX_KM;
+  const minRadiusKm = options.minRadiusKm ?? FUZZ_RADIUS_MIN_KM;
 
   if (minRadiusKm >= maxRadiusKm) {
     throw new Error(`minRadiusKm (${minRadiusKm}) must be less than radiusKm (${maxRadiusKm})`);

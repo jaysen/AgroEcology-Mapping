@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { fuzzLocation, fuzzLocations } from './fuzzLocation';
+import { fuzzLocation, fuzzLocations, FUZZ_RADIUS_MIN_KM, FUZZ_RADIUS_MAX_KM } from './fuzzLocation';
 
 const EARTH_RADIUS_KM = 6371;
 
@@ -21,12 +21,12 @@ const EASTERN_CAPE = { lat: -32.47, lng: 28.19 };
 
 describe('fuzzLocation', () => {
   describe('offset is within the configured radius annulus', () => {
-    it('stays within default max (3 km) and above default min (1 km)', () => {
+    it(`stays within default max (${FUZZ_RADIUS_MAX_KM} km) and above default min (${FUZZ_RADIUS_MIN_KM} km)`, () => {
       for (let i = 0; i < 100; i++) {
         const fuzzed = fuzzLocation(EASTERN_CAPE);
         const dist = haversineKm(EASTERN_CAPE, fuzzed);
-        expect(dist).toBeLessThanOrEqual(3);
-        expect(dist).toBeGreaterThanOrEqual(1);
+        expect(dist).toBeLessThanOrEqual(FUZZ_RADIUS_MAX_KM);
+        expect(dist).toBeGreaterThanOrEqual(FUZZ_RADIUS_MIN_KM);
       }
     });
 
@@ -40,10 +40,10 @@ describe('fuzzLocation', () => {
     });
 
     it('seeded result also obeys the annulus', () => {
-      const fuzzed = fuzzLocation(EASTERN_CAPE, { seed: 'project-42', minRadiusKm: 1, radiusKm: 3 });
+      const fuzzed = fuzzLocation(EASTERN_CAPE, { seed: 'project-42' });
       const dist = haversineKm(EASTERN_CAPE, fuzzed);
-      expect(dist).toBeLessThanOrEqual(3);
-      expect(dist).toBeGreaterThanOrEqual(1);
+      expect(dist).toBeLessThanOrEqual(FUZZ_RADIUS_MAX_KM);
+      expect(dist).toBeGreaterThanOrEqual(FUZZ_RADIUS_MIN_KM);
     });
 
     it('throws if minRadiusKm >= radiusKm', () => {
@@ -66,9 +66,10 @@ describe('fuzzLocation', () => {
     });
 
     it('seeded result still obeys the radius', () => {
-      const fuzzed = fuzzLocation(EASTERN_CAPE, { seed: 'project-42', radiusKm: 3 });
+      const fuzzed = fuzzLocation(EASTERN_CAPE, { seed: 'project-42' });
       const dist = haversineKm(EASTERN_CAPE, fuzzed);
-      expect(dist).toBeLessThanOrEqual(3);
+      expect(dist).toBeLessThanOrEqual(FUZZ_RADIUS_MAX_KM);
+      expect(dist).toBeGreaterThanOrEqual(FUZZ_RADIUS_MIN_KM);
     });
   });
 
@@ -81,11 +82,11 @@ describe('fuzzLocation', () => {
       expect(allSame).toBe(false);
     });
 
-    it('every offset is at least 1 km (hard minimum enforced)', () => {
+    it(`every offset is at least ${FUZZ_RADIUS_MIN_KM} km (hard minimum enforced)`, () => {
       const distances = Array.from({ length: 500 }, () =>
         haversineKm(EASTERN_CAPE, fuzzLocation(EASTERN_CAPE))
       );
-      const tooClose = distances.filter((d) => d < 1).length;
+      const tooClose = distances.filter((d) => d < FUZZ_RADIUS_MIN_KM).length;
       expect(tooClose).toBe(0);
     });
   });
@@ -166,10 +167,12 @@ describe('fuzzLocations', () => {
     expect(fuzzLocations(coords).length).toBe(coords.length);
   });
 
-  it('each result is within radius', () => {
-    const results = fuzzLocations(coords, { radiusKm: 3 });
+  it('each result is within the default annulus', () => {
+    const results = fuzzLocations(coords);
     results.forEach((fuzzed, i) => {
-      expect(haversineKm(coords[i], fuzzed)).toBeLessThanOrEqual(3);
+      const dist = haversineKm(coords[i], fuzzed);
+      expect(dist).toBeLessThanOrEqual(FUZZ_RADIUS_MAX_KM);
+      expect(dist).toBeGreaterThanOrEqual(FUZZ_RADIUS_MIN_KM);
     });
   });
 
