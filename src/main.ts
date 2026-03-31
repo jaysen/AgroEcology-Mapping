@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { projects } from './data';
 import { AgroEcologyProject, PointCategory, POINT_CATEGORIES } from './types';
+import { fuzzLocation } from './fuzzLocation';
 import { version } from '../package.json';
 import './style.css';
 
@@ -125,7 +126,8 @@ function createPopupContent(project: AgroEcologyProject): string {
 
 // Add markers
 projects.forEach(project => {
-  const marker = L.marker([project.location.lat, project.location.lng], {
+  const fuzzed = fuzzLocation(project.location, { seed: `project-${project.id}` });
+  const marker = L.marker([fuzzed.lat, fuzzed.lng], {
     icon: categoryIcons[project.category],
   })
     .addTo(map)
@@ -137,6 +139,26 @@ projects.forEach(project => {
   marker.on('click', function(this: L.Marker) {
     this.openPopup();
   });
+
+  // FUZZ DEBUG — only rendered in dev mode (import.meta.env.DEV).
+  // Automatically absent from production builds via Vite dead-code elimination.
+  if (import.meta.env.DEV) {
+    const origin = project.location;
+    L.circleMarker([origin.lat, origin.lng], {
+      radius: 5,
+      color: '#ef4444',
+      fillColor: '#ef4444',
+      fillOpacity: 0.8,
+      weight: 2,
+    }).addTo(map).bindTooltip(`ORIGIN: ${project.name}`);
+    L.polyline([[origin.lat, origin.lng], [fuzzed.lat, fuzzed.lng]], {
+      color: '#ef4444',
+      weight: 1.5,
+      dashArray: '4 4',
+      opacity: 0.7,
+    }).addTo(map);
+  }
+  
 });
 
 // Legend
