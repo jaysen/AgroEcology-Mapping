@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(distrobox enter:*)"
+      "Bash(distrobox enter:*)",
+      "Bash(python3:*)"
     ]
   }
 }
