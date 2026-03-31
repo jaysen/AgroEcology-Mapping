@@ -242,23 +242,6 @@ footer a:hover {
   color: #0c5460;
 }
 
-.projects-counter {
-  position: absolute;
-  bottom: 2rem;
-  right: 1rem;
-  background: white;
-  padding: 0.8rem 1.2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  font-size: 0.9rem;
-  z-index: 1000;
-}
-
-.projects-counter strong {
-  color: #2d5016;
-  font-size: 1.3rem;
-}
-
 .app-version {
   position: absolute;
   bottom: 0.4rem;
@@ -266,6 +249,11 @@ footer a:hover {
   font-size: 0.7rem;
   color: #999;
   z-index: 1000;
+}
+
+/* Hide Leaflet attribution */
+.leaflet-control-attribution {
+  display: none !important;
 }
 
 /* Responsive Design */
@@ -287,10 +275,4 @@ footer a:hover {
     gap: 0.5rem;
   }
 
-  .projects-counter {
-    bottom: 1rem;
-    right: 0.5rem;
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
-  }
 }

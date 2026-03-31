@@ -190,11 +190,11 @@ const Legend = L.Control.extend({
 });
 new Legend({ position: 'bottomleft' }).addTo(map);
 
-// Projects counter
-const counter = document.createElement('div');
-counter.className = 'projects-counter';
-counter.innerHTML = `<strong>${projects.length}</strong> Projects Mapped`;
-document.getElementById('app')?.appendChild(counter);
+// Inject project count into footer
+const footerEl = document.querySelector('footer p');
+if (footerEl) {
+  footerEl.innerHTML += ` | <strong>${projects.length}</strong> projects mapped`;
+}
 
 // Version footer
 const footer = document.createElement('div');
