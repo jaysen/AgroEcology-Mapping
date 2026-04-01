@@ -8,8 +8,8 @@ Always read [docs/ProjectSpec.md](docs/ProjectSpec.md) at the start of each conv
 
 Source data is in `docs/private/` (gitignored):
 
-- `Map data FINAL 10Mar26.xlsx` — master spreadsheet
-- `Map data FINAL 10Mar26.xlsx - final map data.csv` — CSV export
+- `data/private/Map-data-20260331.ods` — master spreadsheet
+- `data/private/Map-data-20260331.csv` — CSV export
 
 ## Environment
 
