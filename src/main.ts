@@ -1,7 +1,15 @@
+// Set to true when the imported dataset already has fuzzed coordinates.
+// false = fuzz at runtime and show dev origin overlay.
+const DATA_PRE_FUZZED = true;
+import { projects } from './data/data-fuzzed';
+// import { projects } from './data/data-original'; --- IGNORE ---
+
+
+
 import L from 'leaflet';
-import { projects } from './data';
 import { AgroEcologyProject, PointCategory, POINT_CATEGORIES } from './types';
 import { fuzzLocation } from './fuzzLocation';
+
 import { version } from '../package.json';
 import './style.css';
 
@@ -128,8 +136,11 @@ function createPopupContent(project: AgroEcologyProject): string {
 
 // Add markers
 projects.forEach(project => {
-  const fuzzed = fuzzLocation(project.location, { seed: `project-${project.id}` });
-  const marker = L.marker([fuzzed.lat, fuzzed.lng], {
+  const displayLocation = DATA_PRE_FUZZED
+    ? project.location
+    : fuzzLocation(project.location, { seed: `agromap:${project.id}` });
+
+  const marker = L.marker([displayLocation.lat, displayLocation.lng], {
     icon: categoryIcons[project.category],
   })
     .addTo(map)
@@ -142,9 +153,8 @@ projects.forEach(project => {
     this.openPopup();
   });
 
-  // FUZZ DEBUG — only rendered in dev mode (import.meta.env.DEV).
-  // Automatically absent from production builds via Vite dead-code elimination.
-  if (import.meta.env.DEV) {
+  // FUZZ DEBUG — only when data is not pre-fuzzed and running in dev.
+  if (!DATA_PRE_FUZZED && import.meta.env.DEV) {
     const origin = project.location;
     L.circleMarker([origin.lat, origin.lng], {
       radius: 5,
@@ -153,7 +163,7 @@ projects.forEach(project => {
       fillOpacity: 0.8,
       weight: 2,
     }).addTo(map).bindTooltip(`ORIGIN: ${project.name}`);
-    L.polyline([[origin.lat, origin.lng], [fuzzed.lat, fuzzed.lng]], {
+    L.polyline([[origin.lat, origin.lng], [displayLocation.lat, displayLocation.lng]], {
       color: '#ef4444',
       weight: 1.5,
       dashArray: '4 4',
