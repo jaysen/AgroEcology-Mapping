@@ -21,8 +21,8 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({ iconUrl, iconRetinaUrl, shadowUrl });
 
-// Initialize the map centered on Southern Africa
-const map = L.map('map').setView([-25.0, 25.0], 5);
+// Initialize the map centered on South Africa
+const map = L.map('map').setView([-29.0, 25.0], 6);
 
 // Add OpenStreetMap tiles (non-GAFAM)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
