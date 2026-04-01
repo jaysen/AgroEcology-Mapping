@@ -19,6 +19,8 @@ export interface AgroEcologyProject {
   name: string;
   category: PointCategory;
   contact: string;
+  phone?: string;
+  email?: string;
   province: string;
   district: string;
   nearestTown: string;
