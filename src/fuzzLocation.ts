@@ -51,8 +51,8 @@ const EARTH_RADIUS_KM = 6371;
 // ─── Fuzzing radius defaults (kilometres) ────────────────────────────────────
 // Adjust these to tune how far pins are displaced from true coordinates.
 // MIN must be > 0 and < MAX.
-export const FUZZ_RADIUS_MIN_KM = 2;   // closest a pin can land to the real location
-export const FUZZ_RADIUS_MAX_KM = 5;   // furthest a pin can land from the real location
+export const FUZZ_RADIUS_MIN_KM = 1.00;   // closest a pin can land to the real location
+export const FUZZ_RADIUS_MAX_KM = 2.00;   // furthest a pin can land from the real location
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
