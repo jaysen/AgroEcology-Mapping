@@ -21,8 +21,8 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({ iconUrl, iconRetinaUrl, shadowUrl });
 
-// Initialize the map centered on Southern Africa
-const map = L.map('map').setView([-25.0, 25.0], 5);
+// Initialize the map centered on South Africa
+const map = L.map('map').setView([-29.0, 25.0], 6);
 
 // Add OpenStreetMap tiles (non-GAFAM)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -66,7 +66,6 @@ function createPopupContent(project: AgroEcologyProject): string {
   const cat = POINT_CATEGORIES[project.category];
   const categoryBadge = `<span class="category-badge" style="background:${cat.color};color:${cat.textColor}">${cat.code} — ${cat.label}</span>`;
 
-  const yesNo = (val: boolean) => val ? 'Yes' : '—';
 
   const trainingTypeLabel: Record<string, string> = {
     S: 'Short (<7 days)',
@@ -108,7 +107,7 @@ function createPopupContent(project: AgroEcologyProject): string {
         ${project.phone ? `<br>${project.phone}` : ''}
         ${project.email ? `<br><a href="mailto:${project.email}">${project.email}</a>` : ''}
       </div>
-      <div class="popup-section">
+      <div class="popup-section popup-section--inline">
         <strong>Year started:</strong> ${project.yearStarted}
       </div>
       ${activeAttributes.length ? `
@@ -118,9 +117,10 @@ function createPopupContent(project: AgroEcologyProject): string {
           ${activeAttributes.map(a => `<li>${a}</li>`).join('')}
         </ul>
       </div>` : ''}
-      <div class="popup-section">
-        <strong>On-site training:</strong> ${yesNo(project.onSiteTraining)}
-      </div>
+      ${project.onSiteTraining ? `
+      <div class="popup-section popup-section--inline">
+        <strong>On-site training:</strong> Yes
+      </div>` : ''}
       ${project.structuredTrainingProgrammes ? `
       <div class="popup-section">
         <strong>Structured training:</strong> ${trainingTypeDisplay}
