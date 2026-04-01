@@ -66,7 +66,6 @@ function createPopupContent(project: AgroEcologyProject): string {
   const cat = POINT_CATEGORIES[project.category];
   const categoryBadge = `<span class="category-badge" style="background:${cat.color};color:${cat.textColor}">${cat.code} — ${cat.label}</span>`;
 
-  const yesNo = (val: boolean) => val ? 'Yes' : '—';
 
   const trainingTypeLabel: Record<string, string> = {
     S: 'Short (<7 days)',
@@ -118,9 +117,10 @@ function createPopupContent(project: AgroEcologyProject): string {
           ${activeAttributes.map(a => `<li>${a}</li>`).join('')}
         </ul>
       </div>` : ''}
-      <div class="popup-section">
-        <strong>On-site training:</strong> ${yesNo(project.onSiteTraining)}
-      </div>
+      ${project.onSiteTraining ? `
+      <div class="popup-section popup-section--inline">
+        <strong>On-site training:</strong> Yes
+      </div>` : ''}
       ${project.structuredTrainingProgrammes ? `
       <div class="popup-section">
         <strong>Structured training:</strong> ${trainingTypeDisplay}
