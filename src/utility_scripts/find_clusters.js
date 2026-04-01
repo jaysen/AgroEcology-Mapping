@@ -21,7 +21,7 @@ const path = require('path');
 
 const CSV_PATH = path.join(
   __dirname,
-  '../docs/private/Map data FINAL 10Mar26.xlsx - final map data.csv'
+  '../data/private/Map data FINAL 10Mar26.csv'
 );
 
 const radiusDeg   = parseFloat(process.argv[2]) || 0.1;

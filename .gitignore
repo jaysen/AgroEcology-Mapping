@@ -27,3 +27,7 @@ lerna-debug.log*
 
 # private docs
 docs/private/
+
+# private data
+data/private/
+src/data/private/
