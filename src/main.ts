@@ -108,7 +108,7 @@ function createPopupContent(project: AgroEcologyProject): string {
         ${project.phone ? `<br>${project.phone}` : ''}
         ${project.email ? `<br><a href="mailto:${project.email}">${project.email}</a>` : ''}
       </div>
-      <div class="popup-section">
+      <div class="popup-section popup-section--inline">
         <strong>Year started:</strong> ${project.yearStarted}
       </div>
       ${activeAttributes.length ? `
