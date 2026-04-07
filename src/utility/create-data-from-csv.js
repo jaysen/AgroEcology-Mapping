@@ -18,6 +18,18 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 
+// ── Category code mapping ─────────────────────────────────────────────────────
+// Maps raw CSV codes → internal PointCategory codes.
+// Update here when the source spreadsheet renames a category code.
+// Unknown codes fall back to 'LS'.
+const CATEGORY_MAP = {
+  'LS':  'LS',
+  'CC':  'CC',
+  'AEH': 'AEH',
+  'LH':  'SI',   // renamed: Lighthouse → Star initiative
+  'SI':  'SI',
+};
+
 // ── File paths ────────────────────────────────────────────────────────────────
 const INPUT_CSV     = path.resolve(__dirname, '../../data/private/Map-data-20260331.csv');
 const OUTPUT_TS_BASE = path.resolve(__dirname, '../data/private/data-20260331.ts');
@@ -85,7 +97,7 @@ for (let i = 2; i < lines.length; i++) {
   if (isNaN(lat) || isNaN(lng)) continue;
 
   const rawCat = c[1].trim();
-  const category = ['LS', 'CC', 'AEH', 'SI'].includes(rawCat) ? rawCat : 'LS';
+  const category = CATEGORY_MAP[rawCat] ?? 'LS';
 
   const yearRaw = parseInt(c[10], 10);
 
