@@ -85,7 +85,7 @@ for (let i = 2; i < lines.length; i++) {
   if (isNaN(lat) || isNaN(lng)) continue;
 
   const rawCat = c[1].trim();
-  const category = ['LS', 'CC', 'AEH', 'LH'].includes(rawCat) ? rawCat : 'LS';
+  const category = ['LS', 'CC', 'AEH', 'SI'].includes(rawCat) ? rawCat : 'LS';
 
   const yearRaw = parseInt(c[10], 10);
 

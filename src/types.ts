@@ -1,17 +1,18 @@
-export type PointCategory = 'LS' | 'CC' | 'AEH' | 'LH';
+export type PointCategory = 'LS' | 'CC' | 'AEH' | 'SI';
 
 export interface CategoryInfo {
   code: PointCategory;
   label: string;
   color: string;
   textColor: string;
+  symbol?: string;
 }
 
 export const POINT_CATEGORIES: Record<PointCategory, CategoryInfo> = {
-  LS:  { code: 'LS',  label: 'Learning site',                 color: '#30858a', textColor: '#fff' },
+  LS:  { code: 'LS',  label: 'Learning site',                 color: '#1a9ea8', textColor: '#fff' },
   CC:  { code: 'CC',  label: 'Community agroecology centre',   color: '#f26b52', textColor: '#fff' },
-  AEH: { code: 'AEH', label: 'Agroecology hub',               color: '#3b6b4a', textColor: '#fff' },
-  LH:  { code: 'LH',  label: 'Lighthouse',                    color: '#faad5c', textColor: '#1a1a1a' },
+  AEH: { code: 'AEH', label: 'Agroecology hub',               color: '#1e5837', textColor: '#fff' },
+  SI:  { code: 'SI',  label: 'Star initiative',               color: '#faad5c', textColor: '#1a1a1a', symbol: '★' },
 };
 
 export interface AgroEcologyProject {

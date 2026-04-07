@@ -32,16 +32,18 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Create a category marker icon using SVG DivIcon (no CDN dependencies)
 function createCategoryIcon(category: PointCategory): L.DivIcon {
-  const { code, color, textColor } = POINT_CATEGORIES[category];
+  const { code, color, textColor, symbol } = POINT_CATEGORIES[category];
   const size = 36;
+  const label = symbol ?? code;
+  const fontSize = symbol ? '16' : code.length > 2 ? '9' : '11';
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size + 8}" viewBox="0 0 ${size} ${size + 8}">
       <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 2}" fill="${color}" stroke="white" stroke-width="2"/>
       <polygon points="${size / 2 - 6},${size - 2} ${size / 2 + 6},${size - 2} ${size / 2},${size + 6}"
                fill="${color}" stroke="white" stroke-width="1.5"/>
       <text x="${size / 2}" y="${size / 2 + 5}" text-anchor="middle"
-            font-family="system-ui,sans-serif" font-size="${code.length > 2 ? '9' : '11'}"
-            font-weight="bold" fill="${textColor}">${code}</text>
+            font-family="system-ui,sans-serif" font-size="${fontSize}"
+            font-weight="bold" fill="${textColor}">${label}</text>
     </svg>`.trim();
 
   return L.divIcon({
@@ -58,7 +60,7 @@ const categoryIcons: Record<PointCategory, L.DivIcon> = {
   LS:  createCategoryIcon('LS'),
   CC:  createCategoryIcon('CC'),
   AEH: createCategoryIcon('AEH'),
-  LH:  createCategoryIcon('LH'),
+  SI:  createCategoryIcon('SI'),
 };
 
 // Build popup content
@@ -186,7 +188,7 @@ const Legend = L.Control.extend({
         ${Object.values(POINT_CATEGORIES).map(cat => `
           <div class="legend-item">
             <span class="legend-dot" style="background:${cat.color}"></span>
-            <span><strong>${cat.code}</strong> ${cat.label}</span>
+            <span><strong>${cat.symbol ?? cat.code}</strong> ${cat.label}</span>
           </div>`).join('')}
       </div>
     `;

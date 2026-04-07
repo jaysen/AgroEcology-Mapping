@@ -216,7 +216,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 9,
     name: "Kidlinks Small Farm Incubator",
-    category: "LH",
+    category: "SI",
     contact: "Mbalentle Kilani",
     phone: "073 356 0958",
     email: "mbalentlekilani@gmail.com",
@@ -604,7 +604,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 24,
     name: "Ukuvuna Urban Farming Project",
-    category: "LH",
+    category: "SI",
     contact: "John Nzira",
     phone: "083 665 3356",
     email: "JohnNzira@gmail.com",
@@ -656,7 +656,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 26,
     name: "Ekuthuleni Mkhize Homestead",
-    category: "LH",
+    category: "SI",
     contact: "Nonhlanhla Mkhize",
     phone: "079 794 8067 or 060 564 5520",
     email: "nonhlanhlatm78@gmail.com",
@@ -786,7 +786,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 31,
     name: "Siyazisiza Trust",
-    category: "LH",
+    category: "SI",
     contact: "Jenn Bailey",
     phone: "035 772 5860",
     email: "Info@siyazisiza.org.za",
@@ -1405,7 +1405,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 55,
     name: "SK Agricare",
-    category: "LH",
+    category: "SI",
     contact: "Sicelo Kunene",
     phone: "082 789 4281",
     email: "scelo@snns.co.za",
@@ -1431,7 +1431,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 56,
     name: "Donna’s farm",
-    category: "LH",
+    category: "SI",
     contact: "Donna Hornby",
     phone: "072 538 1707",
     email: "donnahornby@gmail.com",
@@ -1664,7 +1664,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 65,
     name: "Bonakude Agroecology Farm",
-    category: "LH",
+    category: "SI",
     contact: "Mvuselelo Ngcoya",
     phone: "072 323 0647",
     email: "letstalk@bonakude.org",
@@ -1794,7 +1794,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 70,
     name: "Mkolosh",
-    category: "LH",
+    category: "SI",
     contact: "Bongiwe Myeni c/o Biowatch",
     phone: "031 206 2954",
     email: "info@biowatch.org.za",
@@ -1820,7 +1820,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 71,
     name: "KwaGogo Mhlanga",
-    category: "LH",
+    category: "SI",
     contact: "Corinne Mngomezulu c/o Biowatch",
     phone: "031 206 2954",
     email: "info@biowatch.org.za",
@@ -1898,7 +1898,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 74,
     name: "KwaThwala",
-    category: "LH",
+    category: "SI",
     contact: "Nombuso Thwala c/o Biowatch",
     phone: "031 206 2954",
     email: "info@biowatch.org.za",
@@ -1924,7 +1924,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 75,
     name: "KwaDlamini kwaMabutho eMaSondo",
-    category: "LH",
+    category: "SI",
     contact: "Grace Dlamini c/o Biowatch",
     phone: "031 206 2954",
     email: "info@biowatch.org.za",
@@ -2028,7 +2028,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 79,
     name: "Mabasa Agroecology Hub",
-    category: "LH",
+    category: "SI",
     contact: "Sipho Michael Zungu",
     phone: "082 769 4992",
     email: "mikengxongo72@gmail.com",
@@ -2054,7 +2054,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 80,
     name: "KwaMuntu Kabongwa",
-    category: "LH",
+    category: "SI",
     contact: "Ntombizethu Ntuli c/o Biowatch",
     phone: "031 206 2954",
     email: "info@biowatch.org.za",
@@ -2106,7 +2106,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 82,
     name: "Kwaphumakahle kwaMfekayi",
-    category: "LH",
+    category: "SI",
     contact: "Tholakele Mfekayi c/o Biowatch",
     phone: "031 206 2954",
     email: "info@biowatch.org.za",
@@ -2236,7 +2236,7 @@ export const projects: AgroEcologyProject[] = [
   {
     id: 87,
     name: "Ngwaaga Moloto Eco Village",
-    category: "LH",
+    category: "SI",
     contact: "Jackson Kadiaka",
     phone: "076 464 0907",
     email: "ngwaagamoloto@gmail.com",
