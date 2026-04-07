@@ -136,44 +136,69 @@ function createPopupContent(project: AgroEcologyProject): string {
   `;
 }
 
-// Add markers
-projects.forEach(project => {
-  const displayLocation = DATA_PRE_FUZZED
-    ? project.location
-    : fuzzLocation(project.location, { seed: `agromap:${project.id}` });
+// ?debug=ids — stamp each pin with its ID for verification
+const DEBUG_IDS = new URLSearchParams(window.location.search).get('debug') === 'ids';
 
-  const marker = L.marker([displayLocation.lat, displayLocation.lng], {
-    icon: categoryIcons[project.category],
-  })
-    .addTo(map)
-    .bindPopup(createPopupContent(project), {
-      maxWidth: 400,
-      className: 'custom-popup',
+// Add markers
+let markersAdded = 0;
+const skipped: number[] = [];
+
+projects.forEach(project => {
+  try {
+    const icon = categoryIcons[project.category];
+    if (!icon) {
+      console.warn(`[agromap] Skipping id ${project.id}: unknown category "${project.category}"`);
+      skipped.push(project.id);
+      return;
+    }
+
+    const displayLocation = DATA_PRE_FUZZED
+      ? project.location
+      : fuzzLocation(project.location, { seed: `agromap:${project.id}` });
+
+    const marker = L.marker([displayLocation.lat, displayLocation.lng], { icon })
+      .addTo(map)
+      .bindPopup(createPopupContent(project), {
+        maxWidth: 400,
+        className: 'custom-popup',
+      });
+
+    marker.on('click', function(this: L.Marker) {
+      this.openPopup();
     });
 
-  marker.on('click', function(this: L.Marker) {
-    this.openPopup();
-  });
+    if (DEBUG_IDS) {
+      marker.bindTooltip(`#${project.id} ${project.name}`, { permanent: true, className: 'debug-id-label', direction: 'top' });
+    }
 
-  // FUZZ DEBUG — only when data is not pre-fuzzed and running in dev.
-  if (!DATA_PRE_FUZZED && import.meta.env.DEV) {
-    const origin = project.location;
-    L.circleMarker([origin.lat, origin.lng], {
-      radius: 5,
-      color: '#ef4444',
-      fillColor: '#ef4444',
-      fillOpacity: 0.8,
-      weight: 2,
-    }).addTo(map).bindTooltip(`ORIGIN: ${project.name}`);
-    L.polyline([[origin.lat, origin.lng], [displayLocation.lat, displayLocation.lng]], {
-      color: '#ef4444',
-      weight: 1.5,
-      dashArray: '4 4',
-      opacity: 0.7,
-    }).addTo(map);
+    markersAdded++;
+
+    // FUZZ DEBUG — only when data is not pre-fuzzed and running in dev.
+    if (!DATA_PRE_FUZZED && import.meta.env.DEV) {
+      const origin = project.location;
+      L.circleMarker([origin.lat, origin.lng], {
+        radius: 5,
+        color: '#ef4444',
+        fillColor: '#ef4444',
+        fillOpacity: 0.8,
+        weight: 2,
+      }).addTo(map).bindTooltip(`ORIGIN: ${project.name}`);
+      L.polyline([[origin.lat, origin.lng], [displayLocation.lat, displayLocation.lng]], {
+        color: '#ef4444',
+        weight: 1.5,
+        dashArray: '4 4',
+        opacity: 0.7,
+      }).addTo(map);
+    }
+  } catch (err) {
+    console.error(`[agromap] Failed to render id ${project.id} (${project.name}):`, err);
+    skipped.push(project.id);
   }
-  
 });
+
+if (skipped.length > 0) {
+  console.warn(`[agromap] ${skipped.length} project(s) not rendered: ids ${skipped.join(', ')}`);
+}
 
 // Legend
 const Legend = L.Control.extend({
@@ -216,4 +241,4 @@ footer.className = 'app-version';
 footer.textContent = `v${version}`;
 document.getElementById('app')?.appendChild(footer);
 
-console.log(`Loaded ${projects.length} agroecology projects`);
+console.log(`[agromap] Loaded ${projects.length} projects, rendered ${markersAdded}${skipped.length ? `, skipped ${skipped.length}` : ''}`);
