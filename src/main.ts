@@ -179,7 +179,7 @@ const Legend = L.Control.extend({
     const div = L.DomUtil.create('div', 'map-legend');
     div.innerHTML = `
       <h4>
-        Point Categories
+        Types of Initiatives
         <button class="legend-toggle" aria-label="Collapse legend">▾</button>
       </h4>
       <div class="legend-body">
