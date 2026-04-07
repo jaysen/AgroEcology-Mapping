@@ -78,16 +78,18 @@ function createPopupContent(project: AgroEcologyProject): string {
     ? project.trainingType.split(' ').map(t => trainingTypeLabel[t] ?? t).join(', ')
     : '—';
 
-  const attributes = [
-    ['High on-farm diversity',          project.highOnFarmDiversity],
-    ['Mixed farming',                   project.mixedFarming],
+  const attributes: [string, boolean, string?][] = [
+    ['High on-farm diversity',          project.highOnFarmDiversity,          'Combination of high crop diversity and 60% or more intercropped'],
+    ['Mixed farming',                   project.mixedFarming,                 'All of poultry, animals, crops and trees'],
     ['Seed bank (individual)',          project.seedBankIndividual],
     ['Seed bank (collective)',          project.seedBankCollective],
     ['Organised seed exchange',         project.organisedSeedExchange],
-    ['Integrated landscape management', project.integratedLandscapeManagement],
-  ] as [string, boolean][];
+    ['Integrated landscape management', project.integratedLandscapeManagement, 'Combination of on-farm natural spaces and involvement in community landscape management'],
+  ];
 
-  const activeAttributes = attributes.filter(([, v]) => v).map(([label]) => label);
+  const activeAttributes = attributes.filter(([, v]) => v).map(([label, , desc]) =>
+    desc ? `${label}<span class="attr-info" title="${desc}">ℹ</span>` : label
+  );
 
   const services = [
     ['Input supply',           project.gsInputSupply],
@@ -116,7 +118,7 @@ function createPopupContent(project: AgroEcologyProject): string {
       <div class="popup-section">
         <strong>Attributes:</strong>
         <ul class="practices-list">
-          ${activeAttributes.map(a => `<li>${a}</li>`).join('')}
+          ${activeAttributes.map(a => `<li class="attr-item">${a}</li>`).join('')}
         </ul>
       </div>` : ''}
       ${project.onSiteTraining ? `

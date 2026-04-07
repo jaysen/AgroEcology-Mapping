@@ -184,6 +184,24 @@ footer a:hover {
   font-weight: bold;
 }
 
+.attr-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin-left: 0.35em;
+  font-size: 0.7rem;
+  font-style: normal;
+  color: #fff;
+  background: #30858a;
+  border-radius: 50%;
+  cursor: help;
+  vertical-align: middle;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
 .popup-stats {
   display: flex;
   gap: 1rem;
