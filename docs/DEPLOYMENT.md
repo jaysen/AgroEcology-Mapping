@@ -46,6 +46,7 @@ GITHUB_PAGES=true npm run deploy
 ```
 
 This will:
+
 1. Build the project (`npm run build`)
 2. Create/update the `gh-pages` branch
 3. Push the `dist/` folder to GitHub Pages
