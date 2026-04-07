@@ -8,10 +8,10 @@ export interface CategoryInfo {
 }
 
 export const POINT_CATEGORIES: Record<PointCategory, CategoryInfo> = {
-  LS:  { code: 'LS',  label: 'Learning site',                 color: '#3b82f6', textColor: '#fff' },
-  CC:  { code: 'CC',  label: 'Community agroecology centre',   color: '#f97316', textColor: '#fff' },
-  AEH: { code: 'AEH', label: 'Agroecology hub',               color: '#8b5cf6', textColor: '#fff' },
-  LH:  { code: 'LH',  label: 'Lighthouse',                    color: '#eab308', textColor: '#1a1a1a' },
+  LS:  { code: 'LS',  label: 'Learning site',                 color: '#30858a', textColor: '#fff' },
+  CC:  { code: 'CC',  label: 'Community agroecology centre',   color: '#f26b52', textColor: '#fff' },
+  AEH: { code: 'AEH', label: 'Agroecology hub',               color: '#3b6b4a', textColor: '#fff' },
+  LH:  { code: 'LH',  label: 'Lighthouse',                    color: '#faad5c', textColor: '#1a1a1a' },
 };
 
 export interface AgroEcologyProject {

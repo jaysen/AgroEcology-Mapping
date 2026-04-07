@@ -16,7 +16,7 @@ body {
 }
 
 header {
-  background: linear-gradient(135deg, #2d5016 0%, #4a7c25 100%);
+  background: linear-gradient(135deg, #3b6b4a 0%, #30858a 100%);
   color: white;
   padding: 1.5rem 2rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -48,7 +48,7 @@ footer {
 }
 
 footer a {
-  color: #2d5016;
+  color: #30858a;
   text-decoration: none;
   font-weight: 500;
 }
@@ -76,7 +76,7 @@ footer a:hover {
 .map-legend h4 {
   margin: 0 0 0.6rem;
   font-size: 0.9rem;
-  color: #2d5016;
+  color: #30858a;
   border-bottom: 1px solid #eee;
   padding-bottom: 0.4rem;
   display: flex;
@@ -90,7 +90,7 @@ footer a:hover {
   border: none;
   cursor: pointer;
   font-size: 0.85rem;
-  color: #2d5016;
+  color: #30858a;
   padding: 0;
   line-height: 1;
 }
