@@ -188,6 +188,7 @@ footer a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   width: 14px;
   height: 14px;
   margin-left: 0.35em;
@@ -200,6 +201,32 @@ footer a:hover {
   vertical-align: middle;
   line-height: 1;
   flex-shrink: 0;
+}
+
+.attr-info::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 0.35rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  width: max-content;
+  max-width: 180px;
+  white-space: normal;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 9999;
+  transition: opacity 0.15s;
+}
+
+.attr-info:hover::after,
+.attr-info--active::after {
+  opacity: 1;
 }
 
 .popup-stats {
