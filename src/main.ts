@@ -246,21 +246,13 @@ document.getElementById('app')?.appendChild(footer);
 
 console.log(`[agromap] Loaded ${projects.length} projects, rendered ${markersAdded}${skipped.length ? `, skipped ${skipped.length}` : ''}`);
 
-// Attribute info icon — inline expansion on click/tap
+// Attribute info icon — show tooltip on click/tap (for mobile)
 document.addEventListener('click', (e) => {
   const target = e.target as HTMLElement;
-  if (!target.classList.contains('attr-info')) {
-    document.querySelectorAll('.attr-tooltip-inline').forEach(el => el.remove());
-    return;
-  }
-  const li = target.closest('li');
-  const existing = li?.querySelector('.attr-tooltip-inline');
-  document.querySelectorAll('.attr-tooltip-inline').forEach(el => el.remove());
-  if (!existing && li) {
-    const div = document.createElement('div');
-    div.className = 'attr-tooltip-inline';
-    div.textContent = target.dataset.tooltip ?? '';
-    li.appendChild(div);
+  const wasActive = target.classList.contains('attr-info--active');
+  document.querySelectorAll('.attr-info--active').forEach(el => el.classList.remove('attr-info--active'));
+  if (target.classList.contains('attr-info') && !wasActive) {
+    target.classList.add('attr-info--active');
     e.stopPropagation();
   }
 });;
