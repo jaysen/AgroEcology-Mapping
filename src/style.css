@@ -224,9 +224,18 @@ footer a:hover {
   transition: opacity 0.15s;
 }
 
-.attr-info:hover::after,
-.attr-info--active::after {
+.attr-info:hover::after {
   opacity: 1;
+}
+
+.attr-tooltip-inline {
+  margin-top: 0.3rem;
+  padding: 0.3rem 0.5rem;
+  background: #333;
+  color: #fff;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  border-radius: 4px;
 }
 
 .popup-stats {
@@ -339,11 +348,6 @@ footer a:hover {
     margin: 10px 12px;
   }
 
-  .attr-info::after {
-    left: auto;
-    right: 0;
-    transform: none;
-  }
 }
 
 /* Debug: ?debug=ids label */
