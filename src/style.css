@@ -326,6 +326,24 @@ footer a:hover {
     gap: 0.5rem;
   }
 
+  .leaflet-popup {
+    max-width: calc(100vw - 40px) !important;
+  }
+
+  .leaflet-popup-content-wrapper {
+    max-width: calc(100vw - 40px);
+  }
+
+  .leaflet-popup-content {
+    max-width: calc(100vw - 60px);
+    margin: 10px 12px;
+  }
+
+  .attr-info::after {
+    left: auto;
+    right: 0;
+    transform: none;
+  }
 }
 
 /* Debug: ?debug=ids label */
