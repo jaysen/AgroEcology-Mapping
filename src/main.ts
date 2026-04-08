@@ -223,6 +223,7 @@ const Legend = L.Control.extend({
     const body = div.querySelector<HTMLDivElement>('.legend-body')!;
     L.DomEvent.on(btn, 'click', () => {
       const collapsed = body.classList.toggle('legend-collapsed');
+      div.classList.toggle('legend-is-collapsed', collapsed);
       btn.textContent = collapsed ? '▸' : '▾';
       btn.setAttribute('aria-label', collapsed ? 'Expand legend' : 'Collapse legend');
     });
