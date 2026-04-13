@@ -38,21 +38,24 @@ export interface FuzzOptions {
   /** Maximum displacement in kilometres. Defaults to FUZZ_RADIUS_MAX_KM. */
   radiusKm?: number;
   /** Minimum displacement in kilometres. Defaults to FUZZ_RADIUS_MIN_KM.
-   *  Must be > 0 and < radiusKm — enforces a hard privacy floor. */
+   * Must be > 0 and < radiusKm — enforces a hard privacy floor. */
   minRadiusKm?: number;
   /** Seed string for deterministic output (same seed → same offset every call).
-   *  Pin direction is fixed per seed — see module doc for trade-off discussion.
-   *  Omit to use Math.random (different offset each call). */
+   * Pin direction is fixed per seed — see module doc for trade-off discussion.
+   * Omit to use Math.random (different offset each call). */
   seed?: string;
 }
 
 const EARTH_RADIUS_KM = 6371;
+const RAD_TO_DEG = 180 / Math.PI;
+const DEG_TO_RAD = Math.PI / 180;
 
 // ─── Fuzzing radius defaults (kilometres) ────────────────────────────────────
 // Adjust these to tune how far pins are displaced from true coordinates.
 // MIN must be > 0 and < MAX.
-export const FUZZ_RADIUS_MIN_KM = 1.00;   // closest a pin can land to the real location
-export const FUZZ_RADIUS_MAX_KM = 2.00;   // furthest a pin can land from the real location
+export const FUZZ_RADIUS_MIN_KM = 1.00; // closest a pin can land to the real location
+export const FUZZ_RADIUS_MAX_KM = 2.00; // furthest a pin can land from the real location
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -67,13 +70,43 @@ function makeSeededRng(seed: string): () => number {
     h ^= h >>> 13;
   }
   let state = h >>> 0;
-
   return function mulberry32() {
     state |= 0;
     state = (state + 0x6d2b79f5) | 0;
     let t = Math.imul(state ^ (state >>> 15), 1 | state);
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 0x100000000;
+  };
+}
+
+interface FuzzDelta {
+  deltaLat: number;
+  deltaLng: number;
+}
+
+/**
+ * Compute a fuzzed displacement vector for the given origin and options.
+ *
+ * Factored out of fuzzLocation so that both lat and lng deltas are derived
+ * from the same r and theta — keeping the displacement vector coherent.
+ * Both components use the same conversion factor (r / EARTH_RADIUS_KM * RAD_TO_DEG);
+ * the only difference is cos vs sin for direction, and the longitude component
+ * divides by cos(lat) to account for meridian convergence at higher latitudes.
+ */
+function computeFuzzDelta(coords: LatLng, rng: () => number, minRadiusKm: number, maxRadiusKm: number): FuzzDelta {
+  const minSq = minRadiusKm * minRadiusKm;
+  const maxSq = maxRadiusKm * maxRadiusKm;
+
+  // Uniform area distribution over annulus [minRadiusKm, maxRadiusKm]
+  const r = Math.sqrt(minSq + rng() * (maxSq - minSq));
+  const theta = rng() * 2 * Math.PI;
+
+  const latRad = coords.lat * DEG_TO_RAD;
+  const kmToDeg = r / EARTH_RADIUS_KM * RAD_TO_DEG;
+
+  return {
+    deltaLat: kmToDeg * Math.cos(theta),
+    deltaLng: kmToDeg * Math.sin(theta) / Math.cos(latRad),
   };
 }
 
@@ -89,24 +122,10 @@ export function fuzzLocation(coords: LatLng, options: FuzzOptions = {}): LatLng 
     throw new Error(`minRadiusKm (${minRadiusKm}) must be less than radiusKm (${maxRadiusKm})`);
   }
 
-  const rng = options.seed !== undefined
-    ? makeSeededRng(options.seed)
-    : Math.random;
+  const rng = options.seed !== undefined ? makeSeededRng(options.seed) : Math.random;
 
-  // Uniform-disk over an annulus [minRadiusKm, maxRadiusKm]:
-  // r = sqrt(lerp(min², max², u)) ensures uniform area distribution within the ring.
-  const minSq = minRadiusKm * minRadiusKm;
-  const maxSq = maxRadiusKm * maxRadiusKm;
-  const r = Math.sqrt(minSq + rng() * (maxSq - minSq));
-  const theta = rng() * 2 * Math.PI;
+  const { deltaLat, deltaLng } = computeFuzzDelta(coords, rng, minRadiusKm, maxRadiusKm);
 
-  // Convert km offset to degrees
-  const deltaLat = (r * Math.cos(theta)) / EARTH_RADIUS_KM * (180 / Math.PI);
-  const deltaLng = (r * Math.sin(theta)) /
-    (EARTH_RADIUS_KM * Math.cos(coords.lat * (Math.PI / 180))) *
-    (180 / Math.PI);
-
-  // Clamp latitude, wrap longitude
   const lat = Math.max(-90, Math.min(90, coords.lat + deltaLat));
   let lng = coords.lng + deltaLng;
   if (lng > 180) lng -= 360;
