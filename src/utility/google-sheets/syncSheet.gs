@@ -1,59 +1,42 @@
 /**
  * AgroEcology Mapping — Sheet Sync
  *
- * Reads from the private "Data" sheet, fuzzes coordinates,
- * and writes a sanitised public version to the "Public" sheet.
+ * Copies rows from the private "Data" sheet to the public "Public" sheet,
+ * replacing precise Lat/Lng with fuzzed coordinates appended at the end.
+ * All other columns pass through unchanged.
  *
- * Private columns (source):
- *   Name, Category, Contact, Phone, Email, Province, District,
- *   NearestTown, Lat, Lng, YearStarted, HighOnFarmDiversity,
- *   MixedFarming, SeedBankIndividual, SeedBankCollective,
- *   OrganisedSeedExchange, IntegratedLandscapeManagement,
- *   OnSiteTraining, StructuredTrainingProgrammes, TrainingType,
- *   TrainingAccreditation, GSInputSupply, GSMentorshipTechSupport,
- *   GSMarketingServices
- *
- * Public columns (output):
- *   Name, Category, Contact, Phone, Email, Province, District, NearestTown,
- *   YearStarted, HighOnFarmDiversity,
- *   MixedFarming, SeedBankIndividual, SeedBankCollective,
- *   OrganisedSeedExchange, IntegratedLandscapeManagement,
- *   OnSiteTraining, StructuredTrainingProgrammes, TrainingType,
- *   TrainingAccreditation, GSInputSupply, GSMentorshipTechSupport,
- *   GSMarketingServices, Lat, Lng
- *
- * Precise Lat/Lng are excluded; output Lat/Lng are fuzzed coordinates.
+ * Private → Public column changes:
+ *   Lat, Lng  removed from their original position
+ *   Lat, Lng  appended at end as fuzzed values (1–2 km annulus displacement)
  *
  * SETUP:
- *   1. Rename your private data tab to "Data" (or update PRIVATE_SHEET_NAME below).
- *   2. Create a blank tab named "Public" (or update PUBLIC_SHEET_NAME below).
- *   3. Run installMenu() once — or just open the spreadsheet, the onOpen trigger
- *      will add the "AgroEcology" menu automatically.
- *   4. Use AgroEcology > Publish to Public Sheet to sync.
+ *   1. Private data tab must be named "Data"  (see PRIVATE_SHEET_NAME)
+ *   2. Create a blank tab named "Public"       (see PUBLIC_SHEET_NAME)
+ *   3. Open the spreadsheet — onOpen adds the AgroEcology menu
+ *   4. AgroEcology > Publish to Public Sheet
  */
 
-// ─── Config ──────────────────────────────────────────────────────────────────
+// ─── Config ───────────────────────────────────────────────────────────────────
 
 const PRIVATE_SHEET_NAME = 'Data';
 const PUBLIC_SHEET_NAME  = 'Public';
 
-const FUZZ_MIN_KM = 1.0;  // hard privacy floor — pin always at least this far from real location
-const FUZZ_MAX_KM = 2.0;  // maximum displacement in km
+const FUZZ_MIN_KM = 1.0;  // privacy floor: pin is always at least this far from true location
+const FUZZ_MAX_KM = 2.0;  // privacy ceiling: maximum displacement
 
-// Columns to EXCLUDE from the public sheet (matched by header name).
-// Lat and Lng are excluded here — they are replaced by fuzzed versions at the end.
-const PRIVATE_ONLY_HEADERS = new Set(['Lat', 'Lng']);
+// These columns are stripped from passthrough and replaced by fuzzed versions at the end.
+const COORD_HEADERS = new Set(['Lat', 'Lng']);
 
-// ─── Fuzzing ─────────────────────────────────────────────────────────────────
+// ─── Fuzzing ──────────────────────────────────────────────────────────────────
 
 const EARTH_RADIUS_KM = 6371;
 
 /**
- * Compute a coherent fuzz displacement vector.
- * Both lat and lng deltas share the same r and theta.
+ * Displaces a coordinate by a random offset within the annulus [FUZZ_MIN_KM, FUZZ_MAX_KM].
+ * Both axes share the same r and theta so the displacement vector is coherent.
  *
- * @param {number} lat - Original latitude in degrees
- * @param {number} lng - Original longitude in degrees
+ * @param {number} lat
+ * @param {number} lng
  * @returns {{ fuzzedLat: number, fuzzedLng: number }}
  */
 function fuzzCoords_(lat, lng) {
@@ -63,151 +46,109 @@ function fuzzCoords_(lat, lng) {
   const r     = Math.sqrt(minSq + Math.random() * (maxSq - minSq));
   const theta = Math.random() * 2 * Math.PI;
 
-  const latRad   = lat * (Math.PI / 180);
   const kmToDeg  = r / EARTH_RADIUS_KM * (180 / Math.PI);
+  const latRad   = lat * (Math.PI / 180);
 
   const deltaLat = kmToDeg * Math.cos(theta);
   const deltaLng = kmToDeg * Math.sin(theta) / Math.cos(latRad);
 
-  let fuzzedLat = lat + deltaLat;
+  let fuzzedLat = Math.max(-90, Math.min(90, lat + deltaLat));
   let fuzzedLng = lng + deltaLng;
-
-  fuzzedLat = Math.max(-90,  Math.min(90,  fuzzedLat));
   if (fuzzedLng >  180) fuzzedLng -= 360;
   if (fuzzedLng < -180) fuzzedLng += 360;
 
   return { fuzzedLat, fuzzedLng };
 }
 
-// ─── Core sync ───────────────────────────────────────────────────────────────
+// ─── Publish ──────────────────────────────────────────────────────────────────
 
-/**
- * Main publish function. Reads all data rows from the private sheet,
- * fuzzes coordinates, strips private columns, and overwrites the public sheet.
- */
 function publishToPublicSheet() {
   const ss           = SpreadsheetApp.getActiveSpreadsheet();
   const privateSheet = ss.getSheetByName(PRIVATE_SHEET_NAME);
   const publicSheet  = ss.getSheetByName(PUBLIC_SHEET_NAME);
 
-  if (!privateSheet) {
-    SpreadsheetApp.getUi().alert(`Sheet "${PRIVATE_SHEET_NAME}" not found. Check PRIVATE_SHEET_NAME in the script config.`);
-    return;
-  }
-  if (!publicSheet) {
-    SpreadsheetApp.getUi().alert(`Sheet "${PUBLIC_SHEET_NAME}" not found. Create a tab named "${PUBLIC_SHEET_NAME}" first, or check PUBLIC_SHEET_NAME in the script config.`);
-    return;
-  }
+  if (!privateSheet) return alert_(`Sheet "${PRIVATE_SHEET_NAME}" not found.`);
+  if (!publicSheet)  return alert_(`Sheet "${PUBLIC_SHEET_NAME}" not found. Create the tab first.`);
 
   const privateData = privateSheet.getDataRange().getValues();
-  if (privateData.length < 2) {
-    SpreadsheetApp.getUi().alert('No data rows found in the private sheet.');
-    return;
-  }
+  if (privateData.length < 2) return alert_('No data rows found in the private sheet.');
 
-  const privateHeaders = privateData[0];
+  const headers = privateData[0];
+  const col     = colIndex_(headers);
 
-  // Resolve column indices from header names — robust to column reordering
-  const col = buildColIndex_(privateHeaders);
+  if (col['Lat'] === undefined) return alert_(`Column "Lat" not found in "${PRIVATE_SHEET_NAME}".`);
+  if (col['Lng'] === undefined) return alert_(`Column "Lng" not found in "${PRIVATE_SHEET_NAME}".`);
 
-  // Validate that required columns exist
-  const required = ['Lat', 'Lng'];
-  for (const name of required) {
-    if (col[name] === undefined) {
-      SpreadsheetApp.getUi().alert(`Required column "${name}" not found in "${PRIVATE_SHEET_NAME}" headers.`);
-      return;
-    }
-  }
+  const publicRows = buildPublicRows_(privateData, headers, col);
 
-  // Build public headers: private headers minus private-only columns,
-  // with Lat/Lng replaced by fuzzed versions under the same names.
-  const publicHeaders = [];
-  const colMapping    = []; // maps public col index → { sourceCol, type }
+  writePublicSheet_(publicSheet, publicRows);
 
-  for (let i = 0; i < privateHeaders.length; i++) {
-    const h = String(privateHeaders[i]).trim();
-    if (PRIVATE_ONLY_HEADERS.has(h)) continue;
+  alert_(`✓ Published ${publicRows.length - 1} record${publicRows.length !== 2 ? 's' : ''} to "${PUBLIC_SHEET_NAME}".`);
+}
 
-    publicHeaders.push(h);
-    colMapping.push({ sourceCol: i, type: 'passthrough' });
-  }
+// ─── Row building ─────────────────────────────────────────────────────────────
 
-  // Append Lat/Lng at the end as fuzzed values
-  publicHeaders.push('Lat');
-  colMapping.push({ sourceCol: col['Lat'], type: 'fuzzedLat' });
-  publicHeaders.push('Lng');
-  colMapping.push({ sourceCol: col['Lng'], type: 'fuzzedLng' });
+function buildPublicRows_(privateData, headers, col) {
+  const passthroughCols = headers.reduce((acc, h, i) => {
+    if (!COORD_HEADERS.has(String(h).trim())) acc.push(i);
+    return acc;
+  }, []);
 
-  // Build public rows
-  const publicRows = [publicHeaders];
+  const publicHeaders = [
+    ...passthroughCols.map(i => headers[i]),
+    'Lat', 'Lng',
+  ];
+
+  const rows = [publicHeaders];
 
   for (let r = 1; r < privateData.length; r++) {
-    const privateRow = privateData[r];
+    const row = privateData[r];
+    if (row.every(cell => cell === '' || cell === null || cell === undefined)) continue;
 
-    // Skip entirely empty rows
-    if (privateRow.every(cell => cell === '' || cell === null || cell === undefined)) continue;
-
-    const lat = parseFloat(privateRow[col['Lat']]);
-    const lng = parseFloat(privateRow[col['Lng']]);
+    const passthrough = passthroughCols.map(i => row[i]);
+    const lat         = parseFloat(row[col['Lat']]);
+    const lng         = parseFloat(row[col['Lng']]);
 
     if (isNaN(lat) || isNaN(lng)) {
-      // Row has no valid coordinates — include in public sheet but leave fuzzed cols blank
-      const publicRow = colMapping.map(m => {
-        if (m.type === 'fuzzedLat' || m.type === 'fuzzedLng') return '';
-        return privateRow[m.sourceCol];
-      });
-      publicRows.push(publicRow);
+      rows.push([...passthrough, '', '']);
       continue;
     }
 
     const { fuzzedLat, fuzzedLng } = fuzzCoords_(lat, lng);
-
-    const publicRow = colMapping.map(m => {
-      if (m.type === 'fuzzedLat') return fuzzedLat;
-      if (m.type === 'fuzzedLng') return fuzzedLng;
-      return privateRow[m.sourceCol];
-    });
-
-    publicRows.push(publicRow);
+    rows.push([...passthrough, fuzzedLat, fuzzedLng]);
   }
 
-  // Overwrite public sheet
-  publicSheet.clearContents();
-  publicSheet.getRange(1, 1, publicRows.length, publicRows[0].length).setValues(publicRows);
-
-  // Style the header row
-  const headerRange = publicSheet.getRange(1, 1, 1, publicRows[0].length);
-  headerRange.setFontWeight('bold');
-  headerRange.setBackground('#e8f5e9');  // light green — on-brand for agroecology
-
-  // Freeze header row
-  publicSheet.setFrozenRows(1);
-
-  // Auto-resize columns for readability
-  publicSheet.autoResizeColumns(1, publicRows[0].length);
-
-  const rowCount = publicRows.length - 1;
-  SpreadsheetApp.getUi().alert(`✓ Published ${rowCount} record${rowCount !== 1 ? 's' : ''} to "${PUBLIC_SHEET_NAME}".`);
+  return rows;
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Sheet writing ────────────────────────────────────────────────────────────
 
-/**
- * Build a name→index map from a header row array.
- * @param {string[]} headers
- * @returns {Object.<string, number>}
- */
-function buildColIndex_(headers) {
+function writePublicSheet_(sheet, rows) {
+  sheet.clearContents();
+  sheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
+
+  const headerRow = sheet.getRange(1, 1, 1, rows[0].length);
+  headerRow.setFontWeight('bold');
+  headerRow.setBackground('#e8f5e9');
+
+  sheet.setFrozenRows(1);
+  sheet.autoResizeColumns(1, rows[0].length);
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function colIndex_(headers) {
   const index = {};
   headers.forEach((h, i) => { index[String(h).trim()] = i; });
   return index;
 }
 
+function alert_(msg) {
+  SpreadsheetApp.getUi().alert(msg);
+}
+
 // ─── Menu ─────────────────────────────────────────────────────────────────────
 
-/**
- * Adds the AgroEcology menu. Runs automatically when the spreadsheet opens.
- */
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('AgroEcology')
