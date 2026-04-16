@@ -59,6 +59,7 @@ const categoryIcons: Record<PointCategory, L.DivIcon> = {
   CC:  createCategoryIcon('CC'),
   AEH: createCategoryIcon('AEH'),
   SI:  createCategoryIcon('SI'),
+  LH:  createCategoryIcon('SI'),
 };
 
 // Build popup content

@@ -1,4 +1,4 @@
-export type PointCategory = 'LS' | 'CC' | 'AEH' | 'SI';
+export type PointCategory = 'LS' | 'CC' | 'AEH' | 'SI' | 'LH';
 
 export interface CategoryInfo {
   code: PointCategory;
@@ -14,6 +14,7 @@ export const POINT_CATEGORIES: Record<PointCategory, CategoryInfo> = {
   CC:  { code: 'CC',  label: 'Community agroecology centre', description: 'A well-developed initiative but which does not meet all the criteria of a star initiative. Established by community members. Operates on its own land (not at a homestead).',                                                               color: '#f26b52', textColor: '#fff' },
   AEH: { code: 'AEH', label: 'Agroecology hub',              description: 'A well-developed initiative but which does not meet all the criteria of a star initiative. Introduced into the community.',                                                                                                                  color: '#1e5837', textColor: '#fff' },
   SI:  { code: 'SI',  label: 'Star initiative',              description: 'High on-farm diversity PLUS at least 4 out of 5 of: mixed farming, on-site seed bank, integrated landscape management, structured training course, and 2+ categories of goods and services offered.', color: '#faad5c', textColor: '#1a1a1a', symbol: '★' },
+  LH:  { code: 'SI',  label: 'Star initiative',              description: 'High on-farm diversity PLUS at least 4 out of 5 of: mixed farming, on-site seed bank, integrated landscape management, structured training course, and 2+ categories of goods and services offered.', color: '#faad5c', textColor: '#1a1a1a', symbol: '★' },
 };
 
 export interface AgroEcologyProject {
