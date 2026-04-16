@@ -211,7 +211,7 @@ const Legend = L.Control.extend({
         <button class="legend-toggle" aria-label="Collapse legend">▾</button>
       </h4>
       <div class="legend-body">
-        ${Object.values(POINT_CATEGORIES).map(cat => `
+        ${(Object.entries(POINT_CATEGORIES) as [string, typeof POINT_CATEGORIES[keyof typeof POINT_CATEGORIES]][]).filter(([key]) => key !== 'LH').map(([, cat]) => `
           <div class="legend-item">
             <span class="legend-dot" style="background:${cat.color}"></span>
             <span>${cat.symbol ? `<strong>${cat.symbol}</strong> ` : ''}${cat.label}<span class="attr-info attr-info--wide" data-tooltip="${cat.description}">i</span></span>
