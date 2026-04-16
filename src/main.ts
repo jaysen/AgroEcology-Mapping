@@ -2,13 +2,12 @@
 // false = fuzz at runtime and show dev origin overlay.
 const DATA_PRE_FUZZED = true;
 import { projects } from './data/data-fuzzed';
-// import { projects } from './data/data-original'; --- IGNORE ---
-
-
 
 import L from 'leaflet';
-import { AgroEcologyProject, PointCategory, POINT_CATEGORIES } from './types';
 import { fuzzLocation } from './fuzzLocation';
+import { categoryIcons } from './icons';
+import { createPopupContent } from './popup';
+import { addLegend } from './legend';
 
 import { version } from '../package.json';
 import './style.css';
@@ -29,113 +28,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   maxZoom: 19,
 }).addTo(map);
-
-// Create a category marker icon using SVG DivIcon (no CDN dependencies)
-function createCategoryIcon(category: PointCategory): L.DivIcon {
-  const { color, textColor, symbol } = POINT_CATEGORIES[category];
-  const size = 36;
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size + 8}" viewBox="0 0 ${size} ${size + 8}">
-      <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 2}" fill="${color}" stroke="white" stroke-width="2"/>
-      <polygon points="${size / 2 - 6},${size - 2} ${size / 2 + 6},${size - 2} ${size / 2},${size + 6}"
-               fill="${color}" stroke="white" stroke-width="1.5"/>
-      ${symbol ? `<text x="${size / 2}" y="${size / 2 + 5}" text-anchor="middle"
-            font-family="system-ui,sans-serif" font-size="16"
-            font-weight="bold" fill="${textColor}">${symbol}</text>` : ''}
-    </svg>`.trim();
-
-  return L.divIcon({
-    html: svg,
-    className: `category-marker category-${category.toLowerCase()}`,
-    iconSize: [size, size + 8],
-    iconAnchor: [size / 2, size + 8],
-    popupAnchor: [0, -(size + 8)],
-  });
-}
-
-// Pre-create icons for each category
-const categoryIcons: Record<PointCategory, L.DivIcon> = {
-  LS:  createCategoryIcon('LS'),
-  CC:  createCategoryIcon('CC'),
-  AEH: createCategoryIcon('AEH'),
-  SI:  createCategoryIcon('SI'),
-  LH:  createCategoryIcon('SI'),
-};
-
-// Build popup content
-function createPopupContent(project: AgroEcologyProject): string {
-  const cat = POINT_CATEGORIES[project.category];
-  const categoryBadge = `<span class="category-badge" style="background:${cat.color};color:${cat.textColor}">${cat.label}</span>`;
-
-
-  const trainingTypeLabel: Record<string, string> = {
-    S: 'Short (<7 days)',
-    I: 'Intermediate (1 wk–6 mo)',
-    L: 'Long (>6 mo)',
-  };
-  const trainingTypeDisplay = project.trainingType
-    ? project.trainingType.split(' ').map(t => trainingTypeLabel[t] ?? t).join(', ')
-    : '—';
-
-  const attributes: [string, boolean, string?][] = [
-    ['High on-farm diversity',          project.highOnFarmDiversity,          'Combination of high crop diversity and 60% or more intercropped'],
-    ['Mixed farming',                   project.mixedFarming,                 'All of poultry, animals, crops and trees'],
-    ['Seed bank (individual)',          project.seedBankIndividual],
-    ['Seed bank (collective)',          project.seedBankCollective],
-    ['Organised seed exchange',         project.organisedSeedExchange],
-    ['Integrated landscape management', project.integratedLandscapeManagement, 'Combination of on-farm natural spaces and involvement in community landscape management'],
-  ];
-
-  const activeAttributes = attributes.filter(([, v]) => v).map(([label, , desc]) =>
-    desc ? `${label}<span class="attr-info" data-tooltip="${desc}">ℹ</span>` : label
-  );
-
-  const services = [
-    ['Input supply',           project.gsInputSupply],
-    ['Mentorship/tech support', project.gsMentorshipTechSupport],
-    ['Marketing services',     project.gsMarketingServices],
-  ] as [string, boolean][];
-
-  const activeServices = services.filter(([, v]) => v).map(([label]) => label);
-
-  return `
-    <div class="popup-content">
-      <h3>${project.name}</h3>
-      ${categoryBadge}
-      <div class="popup-section">
-        <strong>Location:</strong> ${project.nearestTown}, ${project.district}, ${project.province}
-      </div>
-      <div class="popup-section">
-        <strong>Contact:</strong> ${project.contact}
-        ${project.phone ? `<br>${project.phone}` : ''}
-        ${project.email ? `<br><a href="mailto:${project.email}">${project.email}</a>` : ''}
-      </div>
-      <div class="popup-section popup-section--inline">
-        <strong>Year started:</strong> ${project.yearStarted}
-      </div>
-      ${activeAttributes.length ? `
-      <div class="popup-section">
-        <strong>Attributes:</strong>
-        <ul class="practices-list">
-          ${activeAttributes.map(a => `<li class="attr-item">${a}</li>`).join('')}
-        </ul>
-      </div>` : ''}
-      ${project.onSiteTraining ? `
-      <div class="popup-section popup-section--inline">
-        <strong>On-site training:</strong> Yes
-      </div>` : ''}
-      ${project.structuredTrainingProgrammes ? `
-      <div class="popup-section">
-        <strong>Structured training:</strong> ${trainingTypeDisplay}
-        ${project.trainingAccreditation ? ' · Accredited' : ''}
-      </div>` : ''}
-      ${activeServices.length ? `
-      <div class="popup-section">
-        <strong>Goods &amp; Services:</strong> ${activeServices.join(', ')}
-      </div>` : ''}
-    </div>
-  `;
-}
 
 // ?debug=ids — stamp each pin with its ID for verification
 const DEBUG_IDS = new URLSearchParams(window.location.search).get('debug') === 'ids';
@@ -201,35 +93,7 @@ if (skipped.length > 0) {
   console.warn(`[agromap] ${skipped.length} project(s) not rendered: ids ${skipped.join(', ')}`);
 }
 
-// Legend
-const Legend = L.Control.extend({
-  onAdd() {
-    const div = L.DomUtil.create('div', 'map-legend');
-    div.innerHTML = `
-      <h4>
-        Types of Initiatives
-        <button class="legend-toggle" aria-label="Collapse legend">▾</button>
-      </h4>
-      <div class="legend-body">
-        ${(Object.entries(POINT_CATEGORIES) as [string, typeof POINT_CATEGORIES[keyof typeof POINT_CATEGORIES]][]).filter(([key]) => key !== 'LH').map(([, cat]) => `
-          <div class="legend-item">
-            <span class="legend-dot" style="background:${cat.color}"></span>
-            <span>${cat.symbol ? `<strong>${cat.symbol}</strong> ` : ''}${cat.label}<span class="attr-info attr-info--wide" data-tooltip="${cat.description}">i</span></span>
-          </div>`).join('')}
-      </div>
-    `;
-    const btn = div.querySelector<HTMLButtonElement>('.legend-toggle')!;
-    const body = div.querySelector<HTMLDivElement>('.legend-body')!;
-    L.DomEvent.on(btn, 'click', () => {
-      const collapsed = body.classList.toggle('legend-collapsed');
-      div.classList.toggle('legend-is-collapsed', collapsed);
-      btn.textContent = collapsed ? '▸' : '▾';
-      btn.setAttribute('aria-label', collapsed ? 'Expand legend' : 'Collapse legend');
-    });
-    return div;
-  },
-});
-new Legend({ position: 'bottomleft' }).addTo(map);
+addLegend(map);
 
 // Inject project count into footer
 const footerEl = document.querySelector('footer p');
@@ -254,4 +118,4 @@ document.addEventListener('click', (e) => {
     target.classList.add('attr-info--active');
     e.stopPropagation();
   }
-});;
+});
