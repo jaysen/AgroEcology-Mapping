@@ -241,6 +241,12 @@ footer a:hover {
   opacity: 1;
 }
 
+.attr-info--wide::after {
+  max-width: 260px;
+  left: 0;
+  transform: none;
+}
+
 .popup-stats {
   display: flex;
   gap: 1rem;

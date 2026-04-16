@@ -213,7 +213,7 @@ const Legend = L.Control.extend({
         ${Object.values(POINT_CATEGORIES).map(cat => `
           <div class="legend-item">
             <span class="legend-dot" style="background:${cat.color}"></span>
-            <span>${cat.symbol ? `<strong>${cat.symbol}</strong> ` : ''}${cat.label}</span>
+            <span>${cat.symbol ? `<strong>${cat.symbol}</strong> ` : ''}${cat.label}<span class="attr-info attr-info--wide" data-tooltip="${cat.description}">i</span></span>
           </div>`).join('')}
       </div>
     `;
