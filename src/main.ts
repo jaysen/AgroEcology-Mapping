@@ -32,18 +32,16 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Create a category marker icon using SVG DivIcon (no CDN dependencies)
 function createCategoryIcon(category: PointCategory): L.DivIcon {
-  const { code, color, textColor, symbol } = POINT_CATEGORIES[category];
+  const { color, textColor, symbol } = POINT_CATEGORIES[category];
   const size = 36;
-  const label = symbol ?? code;
-  const fontSize = symbol ? '16' : code.length > 2 ? '9' : '11';
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size + 8}" viewBox="0 0 ${size} ${size + 8}">
       <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 2}" fill="${color}" stroke="white" stroke-width="2"/>
       <polygon points="${size / 2 - 6},${size - 2} ${size / 2 + 6},${size - 2} ${size / 2},${size + 6}"
                fill="${color}" stroke="white" stroke-width="1.5"/>
-      <text x="${size / 2}" y="${size / 2 + 5}" text-anchor="middle"
-            font-family="system-ui,sans-serif" font-size="${fontSize}"
-            font-weight="bold" fill="${textColor}">${label}</text>
+      ${symbol ? `<text x="${size / 2}" y="${size / 2 + 5}" text-anchor="middle"
+            font-family="system-ui,sans-serif" font-size="16"
+            font-weight="bold" fill="${textColor}">${symbol}</text>` : ''}
     </svg>`.trim();
 
   return L.divIcon({
@@ -66,7 +64,7 @@ const categoryIcons: Record<PointCategory, L.DivIcon> = {
 // Build popup content
 function createPopupContent(project: AgroEcologyProject): string {
   const cat = POINT_CATEGORIES[project.category];
-  const categoryBadge = `<span class="category-badge" style="background:${cat.color};color:${cat.textColor}">${cat.code} — ${cat.label}</span>`;
+  const categoryBadge = `<span class="category-badge" style="background:${cat.color};color:${cat.textColor}">${cat.label}</span>`;
 
 
   const trainingTypeLabel: Record<string, string> = {
@@ -215,7 +213,7 @@ const Legend = L.Control.extend({
         ${Object.values(POINT_CATEGORIES).map(cat => `
           <div class="legend-item">
             <span class="legend-dot" style="background:${cat.color}"></span>
-            <span><strong>${cat.symbol ?? cat.code}</strong> ${cat.label}</span>
+            <span>${cat.symbol ? `<strong>${cat.symbol}</strong> ` : ''}${cat.label}</span>
           </div>`).join('')}
       </div>
     `;
