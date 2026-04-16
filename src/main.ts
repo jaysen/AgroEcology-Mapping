@@ -66,7 +66,7 @@ const categoryIcons: Record<PointCategory, L.DivIcon> = {
 // Build popup content
 function createPopupContent(project: AgroEcologyProject): string {
   const cat = POINT_CATEGORIES[project.category];
-  const categoryBadge = `<span class="category-badge" style="background:${cat.color};color:${cat.textColor}">${cat.code} — ${cat.label}</span>`;
+  const categoryBadge = `<span class="category-badge" style="background:${cat.color};color:${cat.textColor}">${cat.label}</span>`;
 
 
   const trainingTypeLabel: Record<string, string> = {
@@ -215,7 +215,7 @@ const Legend = L.Control.extend({
         ${Object.values(POINT_CATEGORIES).map(cat => `
           <div class="legend-item">
             <span class="legend-dot" style="background:${cat.color}"></span>
-            <span><strong>${cat.symbol ?? cat.code}</strong> ${cat.label}</span>
+            <span>${cat.symbol ? `<strong>${cat.symbol}</strong> ` : ''}${cat.label}</span>
           </div>`).join('')}
       </div>
     `;
