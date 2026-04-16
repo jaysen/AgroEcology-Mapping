@@ -1,3 +1,8 @@
+// 'LH' (Lighthouse) was an earlier category code used in the source spreadsheet.
+// It has been renamed to 'SI' (Star Initiative). Raw CSV data may still contain
+// 'LH'; create-data-from-csv.js maps it to 'SI' at import time, so 'LH' should
+// never appear in a generated data file or at runtime. It is kept in this union
+// only so that TypeScript accepts any stale raw data that bypasses the pipeline.
 export type PointCategory = 'LS' | 'CC' | 'AEH' | 'SI' | 'LH';
 
 export interface CategoryInfo {
@@ -14,6 +19,9 @@ export const POINT_CATEGORIES: Record<PointCategory, CategoryInfo> = {
   CC:  { code: 'CC',  label: 'Community agroecology centre', description: 'A well-developed initiative but which does not meet all the criteria of a star initiative. Established by community members. Operates on its own land (not at a homestead).',                                                               color: '#f26b52', textColor: '#fff' },
   AEH: { code: 'AEH', label: 'Agroecology hub',              description: 'A well-developed initiative but which does not meet all the criteria of a star initiative. Introduced into the community.',                                                                                                                  color: '#1e5837', textColor: '#fff' },
   SI:  { code: 'SI',  label: 'Star initiative',              description: 'High on-farm diversity PLUS at least 4 out of 5 of: mixed farming, on-site seed bank, integrated landscape management, structured training course, and 2+ categories of goods and services offered.', color: '#faad5c', textColor: '#1a1a1a', symbol: '★' },
+  // LH (Lighthouse) is an alias for SI — kept here as a safety fallback in case
+  // a data file is loaded that was not processed through create-data-from-csv.js
+  // (which normalises LH → SI). Any LH entry will render identically to SI.
   LH:  { code: 'SI',  label: 'Star initiative',              description: 'High on-farm diversity PLUS at least 4 out of 5 of: mixed farming, on-site seed bank, integrated landscape management, structured training course, and 2+ categories of goods and services offered.', color: '#faad5c', textColor: '#1a1a1a', symbol: '★' },
 };
 
