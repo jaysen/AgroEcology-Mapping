@@ -1,9 +1,5 @@
-// Set to true when the imported dataset already has fuzzed coordinates.
-// false = fuzz at runtime and show dev origin overlay.
-const DATA_PRE_FUZZED = true;
-import { projects } from './data/data-fuzzed';
-
 import L from 'leaflet';
+import { projects } from './data/data-fuzzed';
 import { fuzzLocation } from './fuzzLocation';
 import { categoryIcons } from './icons';
 import { createPopupContent } from './popup';
@@ -11,6 +7,12 @@ import { addLegend } from './legend';
 
 import { version } from '../package.json';
 import './style.css';
+
+// Whether the imported dataset already has fuzzed coordinates.
+// Must stay in sync with the import above:
+//   data-fuzzed → true  (coordinates pre-fuzzed by fuzz-data.js)
+//   data-actual → false (coordinates fuzzed at runtime; shows dev origin overlay)
+const DATA_PRE_FUZZED = true;
 
 // Fix for default marker icons in Leaflet with bundlers
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
