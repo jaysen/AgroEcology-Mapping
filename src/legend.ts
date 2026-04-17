@@ -15,8 +15,8 @@ export function addLegend(map: L.Map): void {
             .filter(([key]) => key !== 'LH')  // LH is an alias for SI — exclude the duplicate entry
             .map(([, cat]) => `
               <div class="legend-item">
-                <span class="legend-dot" style="background:${cat.color}"></span>
-                <span>${cat.symbol ? `<strong>${cat.symbol}</strong> ` : ''}${cat.label}<span class="attr-info attr-info--wide" data-tooltip="${cat.description}">i</span></span>
+                <span class="legend-dot" style="background:${cat.color};color:${cat.textColor}">${cat.symbol ?? ''}</span>
+                <span>${cat.label}<span class="attr-info attr-info--wide" data-tooltip="${cat.description}">i</span></span>
               </div>`).join('')}
         </div>
       `;
