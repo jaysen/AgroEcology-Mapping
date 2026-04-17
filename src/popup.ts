@@ -1,5 +1,13 @@
 import { AgroEcologyProject, POINT_CATEGORIES } from './types';
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 export function createPopupContent(project: AgroEcologyProject): string {
   const cat = POINT_CATEGORIES[project.category];
   const categoryBadge = `<span class="category-badge" style="background:${cat.color};color:${cat.textColor}">${cat.label}</span>`;
@@ -36,15 +44,15 @@ export function createPopupContent(project: AgroEcologyProject): string {
 
   return `
     <div class="popup-content">
-      <h3>${project.name}</h3>
+      <h3>${escapeHtml(project.name)}</h3>
       ${categoryBadge}
       <div class="popup-section">
-        <strong>Location:</strong> ${project.nearestTown}, ${project.district}, ${project.province}
+        <strong>Location:</strong> ${escapeHtml(project.nearestTown)}, ${escapeHtml(project.district)}, ${escapeHtml(project.province)}
       </div>
       <div class="popup-section">
-        <strong>Contact:</strong> ${project.contact}
-        ${project.phone ? `<br>${project.phone}` : ''}
-        ${project.email ? `<br><a href="mailto:${project.email}">${project.email}</a>` : ''}
+        <strong>Contact:</strong> ${escapeHtml(project.contact)}
+        ${project.phone ? `<br>${escapeHtml(project.phone)}` : ''}
+        ${project.email ? `<br><a href="mailto:${escapeHtml(project.email)}">${escapeHtml(project.email)}</a>` : ''}
       </div>
       <div class="popup-section popup-section--inline">
         <strong>Year started:</strong> ${project.yearStarted}
