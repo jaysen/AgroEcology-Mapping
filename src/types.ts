@@ -21,6 +21,8 @@ export const POINT_CATEGORIES: Record<PointCategory, CategoryInfo> = {
     description: 'Offers training and/or other goods and services to wider farmer networks. May be located at a homestead or a separate piece of land.',
     color: '#1a9ea8',
     textColor: '#fff',
+    symbol: '✎',
+    //symbol: '✎⚑',
   },
   CC: {
     code: 'CC',
@@ -28,6 +30,8 @@ export const POINT_CATEGORIES: Record<PointCategory, CategoryInfo> = {
     description: 'A well-developed initiative but which does not meet all the criteria of a star initiative. Established by community members. Operates on its own land (not at a homestead).',
     color: '#f26b52',
     textColor: '#fff',
+    symbol: '⚑',
+    //symbol: '⚑☉⦿⦾◉⊙⊚⦿⦾○⊙⊚☉',
   },
   AEH: {
     code: 'AEH',
@@ -35,6 +39,8 @@ export const POINT_CATEGORIES: Record<PointCategory, CategoryInfo> = {
     description: 'A well-developed initiative but which does not meet all the criteria of a star initiative. Introduced into the community.',
     color: '#1e5837',
     textColor: '#fff',
+    symbol: '✻',
+    //symbol: '❉✼',
   },
   SI: {
     code: 'SI',
