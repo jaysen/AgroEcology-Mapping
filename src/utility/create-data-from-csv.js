@@ -19,14 +19,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 
 // ── Category code mapping ─────────────────────────────────────────────────────
-// Maps raw CSV codes → internal PointCategory codes.
+// Maps raw CSV codes → internal PointCategory codes used by the app (types.ts).
 // Update here when the source spreadsheet renames a category code.
 // Unknown codes fall back to 'LS'.
+//
+// LH (Lighthouse) was the original spreadsheet label for what is now called
+// SI (Star Initiative). The spreadsheet may still emit 'LH' for older rows or
+// if not all editors have adopted the new name. This mapping ensures the app
+// always receives the canonical 'SI' code regardless of which name appears in
+// the CSV. The 'LH' key in POINT_CATEGORIES / categoryIcons in the app is a
+// matching safety net for data that bypasses this pipeline.
 const CATEGORY_MAP = {
   'LS':  'LS',
   'CC':  'CC',
   'AEH': 'AEH',
-  'LH':  'SI',   // renamed: Lighthouse → Star initiative
+  'LH':  'SI',   // legacy name — Lighthouse was renamed to Star Initiative
   'SI':  'SI',
 };
 
