@@ -1,8 +1,10 @@
 import L from 'leaflet';
-import { projects } from './data/data-fuzzed';
+// import { projects } from './data/data-fuzzed';
+import { loadProjectsFromCsv } from './loadProjects';
+import { createPopupContent } from './popup';
+import { addLegend } from './legend';
 import { fuzzLocation } from './fuzzLocation';
 import { categoryIcons } from './icons';
-import { loadProjectsFromCsv } from './loadProjects';
 
 import { version } from '../package.json';
 import './style.css';
