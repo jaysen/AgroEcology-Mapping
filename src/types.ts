@@ -21,8 +21,8 @@ export const POINT_CATEGORIES: Record<PointCategory, CategoryInfo> = {
     description: 'Offers training and/or other goods and services to wider farmer networks. May be located at a homestead or a separate piece of land.',
     color: '#1a9ea8',
     textColor: '#fff',
-    symbol: '✎',
-    //symbol: '✎⚑',
+    symbol: '▾',
+    //symbol: '▾▸▼⧨✎⚑',
   },
   CC: {
     code: 'CC',
