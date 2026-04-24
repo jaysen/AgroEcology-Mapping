@@ -150,12 +150,12 @@ if (DATA_URL) {
     if (skippedRows > 0) {
       console.warn(`[agromap] ${skippedRows} row(s) skipped during load`);
     }
-    initMarkers(projects, /* preFuzzed */ true);
+    initMarkers(projects, DATA_PRE_FUZZED);
   });
 } else {
   // Bundled static fallback — import at build time
   import('./data/data-fuzzed').then(({ projects }) => {
     console.log('[agromap] Using bundled static dataset (VITE_DATA_URL not set)');
-    initMarkers(projects, /* preFuzzed */ true);
+    initMarkers(projects, DATA_PRE_FUZZED);
   });
 }
