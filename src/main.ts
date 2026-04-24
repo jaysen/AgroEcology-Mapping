@@ -5,6 +5,7 @@ import { createPopupContent } from './popup';
 import { addLegend } from './legend';
 import { fuzzLocation } from './fuzzLocation';
 import { categoryIcons } from './icons';
+import { AgroEcologyProject } from './types';
 
 import { version } from '../package.json';
 import './style.css';
