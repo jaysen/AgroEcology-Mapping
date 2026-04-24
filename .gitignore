@@ -31,5 +31,5 @@ docs/private/
 # private data
 data/private/
 src/data/private/
-
+public/
 public/data.csv
