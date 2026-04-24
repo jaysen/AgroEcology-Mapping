@@ -366,13 +366,13 @@ footer a:hover {
 
 }
 
-/* Debug: ?debug=ids label */
-.debug-id-label {
-  background: rgba(0,0,0,0.75);
+/* Debug labels: eg ?debug=ids, ?debug=names, ?debug=full */
+.debug-label {
+  background: rgba(0,0,0,1);
   color: #fff;
   border: none;
   border-radius: 3px;
-  font-size: 10px;
+  font-size: 14px;
   padding: 1px 4px;
   white-space: nowrap;
   pointer-events: none;

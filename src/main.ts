@@ -35,6 +35,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // ?debug=ids — stamp each pin with its ID for verification
 const DEBUG_IDS = new URLSearchParams(window.location.search).get('debug') === 'ids';
+const DEBUG_NAMES = new URLSearchParams(window.location.search).get('debug') === 'names';
+const DEBUG_FULL = new URLSearchParams(window.location.search).get('debug') === 'full';
 
 /**
  * Render markers for a loaded project list onto the map.
@@ -71,9 +73,17 @@ function initMarkers(projects: AgroEcologyProject[], preFuzzed: boolean): void {
       });
 
       if (DEBUG_IDS) {
-        marker.bindTooltip(`#${project.id} ${project.name}`, { permanent: true, className: 'debug-id-label', direction: 'top' });
+        marker.bindTooltip(`#${project.id}`, { permanent: true, className: 'debug-label', direction: 'top' });
       }
 
+      if (DEBUG_NAMES) {
+        marker.bindTooltip(`${project.name}`, { permanent: true, className: 'debug-label', direction: 'top' });
+      }
+
+      if (DEBUG_FULL) {
+        marker.bindTooltip(`#${project.id} ${project.name}`, { permanent: true, className: 'debug-label', direction: 'top' });
+      }
+      
       markersAdded++;
 
       // FUZZ DEBUG — only when data is not pre-fuzzed and running in dev.
