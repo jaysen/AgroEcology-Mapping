@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agroecology Map – Embed Examples</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: #f4f6f3;
+      color: #222;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .page-header {
+      background: #2d5016;
+      color: white;
+      padding: 1.4rem 2rem;
+    }
+
+    .page-header h1 { font-size: 1.2rem; font-weight: 700; }
+    .page-header p  { font-size: 0.88rem; opacity: 0.75; margin-top: 0.2rem; }
+
+    .page-body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ── Example blocks ── */
+    .example {
+      background: white;
+      border: 1px solid #d8e4d0;
+      border-radius: 10px;
+      margin-bottom: 3rem;
+      overflow: hidden;
+    }
+
+    .example-header {
+      background: #eef6ee;
+      border-bottom: 1px solid #d8e4d0;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.8rem;
+    }
+
+    .example-number {
+      background: #2d5016;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .example-header h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2d5016;
+    }
+
+    .example-desc {
+      padding: 0.9rem 1.5rem;
+      font-size: 0.88rem;
+      color: #555;
+      border-bottom: 1px solid #eee;
+    }
+
+    /* ── Live demo ── */
+    .demo-area {
+      padding: 1.2rem 1.5rem;
+      background: #fafafa;
+      border-bottom: 1px solid #eee;
+    }
+
+    .demo-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #999;
+      margin-bottom: 0.6rem;
+    }
+
+    /* Option 1: responsive wrapper */
+    .map-responsive {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      min-height: 380px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #ccc;
+    }
+
+    .map-responsive iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Option 2: fixed height */
+    .map-fixed iframe {
+      width: 100%;
+      height: 480px;
+      border: none;
+      border-radius: 6px;
+      display: block;
+      border: 1px solid #ccc;
+    }
+
+    /* Option 3: WordPress note — no live iframe, just a visual mock */
+    .wp-mock {
+      background: #f0f0f1;
+      border: 2px dashed #bbb;
+      border-radius: 6px;
+      padding: 1.5rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.88rem;
+    }
+
+    .wp-mock strong { display: block; margin-bottom: 0.3rem; color: #444; }
+
+    /* ── Code snippet ── */
+    .code-area {
+      padding: 1.2rem 1.5rem;
+    }
+
+    .code-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #999;
+      margin-bottom: 0.6rem;
+    }
+
+    pre {
+      background: #1e2a1a;
+      color: #c8e6b0;
+      padding: 1rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.55;
+    }
+
+    code {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+
+    .note {
+      background: #eef6ee;
+      border-left: 3px solid #3b6b4a;
+      padding: 0.6rem 1rem;
+      border-radius: 0 5px 5px 0;
+      font-size: 0.82rem;
+      color: #2d5016;
+      margin-top: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <h1>Agroecology Map – Embed Examples</h1>
+    <p>Three ways to embed the interactive map on any website</p>
+  </header>
+
+  <div class="page-body">
+
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- OPTION 1: Responsive iframe                           -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="example">
+
+      <div class="example-header">
+        <span class="example-number">1</span>
+        <h2>Responsive iframe</h2>
+      </div>
+
+      <p class="example-desc">
+        The iframe is wrapped in a container that maintains a 16:9 aspect ratio and scales with the
+        page width. Recommended for most use cases — works in plain HTML pages and all major page
+        builders (WordPress, Squarespace, Webflow, etc.).
+      </p>
+
+      <div class="demo-area">
+        <div class="demo-label">Live preview</div>
+        <div class="map-responsive">
+          <iframe
+            src="https://jaysen.github.io/AgroEcology-Mapping/"
+            title="Agroecology Action Collective Projects Map"
+            loading="lazy"
+            allow="fullscreen"
+          ></iframe>
+        </div>
+      </div>
+
+      <div class="code-area">
+        <div class="code-label">Embed code</div>
+<pre><code>&lt;div style="
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 400px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+"&gt;
+  &lt;iframe
+    src="https://jaysen.github.io/AgroEcology-Mapping/"
+    title="Agroecology Action Collective Projects Map"
+    style="width: 100%; height: 100%; border: none; display: block;"
+    loading="lazy"
+    allow="fullscreen"
+  &gt;&lt;/iframe&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- OPTION 2: Fixed height iframe                         -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="example">
+
+      <div class="example-header">
+        <span class="example-number">2</span>
+        <h2>Fixed height iframe</h2>
+      </div>
+
+      <p class="example-desc">
+        A simpler embed with a fixed pixel height. Useful when the container width is already
+        constrained (e.g. a sidebar or fixed-layout template) or when you need precise control
+        over the map's dimensions.
+      </p>
+
+      <div class="demo-area">
+        <div class="demo-label">Live preview</div>
+        <div class="map-fixed">
+          <iframe
+            src="https://jaysen.github.io/AgroEcology-Mapping/"
+            title="Agroecology Action Collective Projects Map"
+            loading="lazy"
+            allow="fullscreen"
+          ></iframe>
+        </div>
+      </div>
+
+      <div class="code-area">
+        <div class="code-label">Embed code</div>
+<pre><code>&lt;iframe
+  src="https://jaysen.github.io/AgroEcology-Mapping/"
+  title="Agroecology Action Collective Projects Map"
+  width="100%"
+  height="500"
+  style="border: none; border-radius: 6px; display: block;"
+  loading="lazy"
+  allow="fullscreen"
+&gt;&lt;/iframe&gt;</code></pre>
+        <div class="note">
+          Adjust <code>height</code> to suit your layout. 480–600 px works well for most desktop
+          widths; 400 px is a reasonable minimum for mobile.
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- OPTION 3: WordPress Custom HTML block                 -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="example">
+
+      <div class="example-header">
+        <span class="example-number">3</span>
+        <h2>WordPress – Custom HTML block</h2>
+      </div>
+
+      <p class="example-desc">
+        In the WordPress block editor (Gutenberg), insert a <strong>Custom HTML</strong> block and
+        paste either snippet above. No plugin required.
+      </p>
+
+      <div class="demo-area">
+        <div class="demo-label">In the WordPress editor it looks like this</div>
+        <div class="wp-mock">
+          <strong>Custom HTML block</strong>
+          Paste Option 1 or Option 2 code here — the map renders on the published page.
+        </div>
+      </div>
+
+      <div class="code-area">
+        <div class="code-label">Steps</div>
+<pre><code>1. Open the page or post in the WordPress editor.
+2. Click ⊕ to add a new block — search for "Custom HTML".
+3. Paste the Option 1 or Option 2 code into the block.
+4. Click Preview to check the result, then Publish.</code></pre>
+        <div class="note">
+          If your theme enforces a maximum content width, set the Custom HTML block alignment to
+          <strong>Wide</strong> or <strong>Full width</strong> using the block toolbar — this gives
+          the map enough horizontal space to be usable.
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /page-body -->
+
+</body>
+</html>
