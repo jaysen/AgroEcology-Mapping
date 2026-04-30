@@ -114,6 +114,46 @@
       border: 1px solid #ccc;
     }
 
+    /* Option 4: fullscreen button wrapper */
+    .map-fullscreen-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      min-height: 380px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #ccc;
+    }
+
+    .map-fullscreen-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .fullscreen-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 5px 8px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      line-height: 1;
+    }
+
+    .fullscreen-btn:hover { background: #f0f0f0; }
+
     /* Option 3: WordPress note — no live iframe, just a visual mock */
     .wp-mock {
       background: #f0f0f1;
@@ -277,6 +317,91 @@
 
 
     <!-- ══════════════════════════════════════════════════════ -->
+    <!-- OPTION 4: Responsive iframe with fullscreen button   -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="example">
+
+      <div class="example-header">
+        <span class="example-number">4</span>
+        <h2>Responsive iframe with fullscreen button</h2>
+      </div>
+
+      <p class="example-desc">
+        Same responsive wrapper as Option 1, with a fullscreen button overlaid in the top-right
+        corner. Clicking it expands the map to fill the browser window. Uses the browser's native
+        Fullscreen API — no plugins or dependencies required.
+      </p>
+
+      <div class="demo-area">
+        <div class="demo-label">Live preview — click the button to go fullscreen</div>
+        <div class="map-fullscreen-wrap" id="mapWrap">
+          <button class="fullscreen-btn" onclick="toggleFullscreen(document.getElementById('mapWrap'))">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <polyline points="9 21 3 21 3 15"></polyline>
+              <line x1="21" y1="3" x2="14" y2="10"></line>
+              <line x1="3" y1="21" x2="10" y2="14"></line>
+            </svg>
+            Fullscreen
+          </button>
+          <iframe
+            src="https://jaysen.github.io/AgroEcology-Mapping/"
+            title="Agroecology Action Collective Projects Map"
+            loading="lazy"
+            allow="fullscreen"
+          ></iframe>
+        </div>
+      </div>
+
+      <div class="code-area">
+        <div class="code-label">Embed code</div>
+<pre><code>&lt;div id="mapWrap" style="
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 400px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+"&gt;
+  &lt;button
+    onclick="toggleFullscreen(document.getElementById('mapWrap'))"
+    style="
+      position: absolute; top: 10px; right: 10px; z-index: 1000;
+      background: white; border: 1px solid #ccc; border-radius: 5px;
+      padding: 5px 10px; cursor: pointer; font-size: 0.8rem; font-weight: 600;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    "
+  &gt;&#x26;#x26F6; Fullscreen&lt;/button&gt;
+  &lt;iframe
+    src="https://agroecologyaction.org.za/map/"
+    title="Agroecology Action Collective Projects Map"
+    style="width: 100%; height: 100%; border: none; display: block;"
+    loading="lazy"
+    allow="fullscreen"
+  &gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+function toggleFullscreen(el) {
+  if (!document.fullscreenElement) {
+    el.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
+&lt;/script&gt;</code></pre>
+        <div class="note">
+          The <code>&#x26F6;</code> character (⛶) is a Unicode fullscreen icon — replace it with
+          any text or SVG icon you prefer. The button disappears automatically when the browser
+          UI provides its own fullscreen controls.
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════ -->
     <!-- OPTION 3: WordPress Custom HTML block                 -->
     <!-- ══════════════════════════════════════════════════════ -->
     <div class="example">
@@ -315,6 +440,16 @@
     </div>
 
   </div><!-- /page-body -->
+
+  <script>
+    function toggleFullscreen(el) {
+      if (!document.fullscreenElement) {
+        el.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+  </script>
 
 </body>
 </html>
