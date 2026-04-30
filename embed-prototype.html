@@ -68,6 +68,7 @@
 
     /* ── Map embed ── */
     .map-embed-wrapper {
+      position: relative;
       width: 100%;
       height: 510px;
       margin: 0.6rem 0 0.5rem;
@@ -75,6 +76,28 @@
       border-radius: 4px;
       overflow: hidden;
     }
+
+    .map-fullscreen-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 5px 9px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      line-height: 1;
+    }
+
+    .map-fullscreen-btn:hover { background: #f0f0f0; }
 
     .map-embed-wrapper iframe {
       width: 100%;
@@ -227,9 +250,18 @@
     <p>An interactive map of agroecology initiatives mapped in Phase 1 – click below.</p>
 
     <!-- EMBED START — copy this block into your own page -->
-    <div class="map-embed-wrapper">
+    <div class="map-embed-wrapper" id="mapWrap">
+      <button class="map-fullscreen-btn" onclick="toggleFullscreen(document.getElementById('mapWrap'))">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <polyline points="9 21 3 21 3 15"></polyline>
+          <line x1="21" y1="3" x2="14" y2="10"></line>
+          <line x1="3" y1="21" x2="10" y2="14"></line>
+        </svg>
+        Fullscreen
+      </button>
       <iframe
-        src="https://agroecologyaction.org.za/map/"
+        src="https://jaysen.github.io/AgroEcology-Mapping/"
         title="Agroecology Action Collective Projects Map"
         loading="lazy"
         allow="fullscreen"
@@ -271,7 +303,7 @@
   border: 1px solid #ccc;
 "&gt;
   &lt;iframe
-    src="https://agroecologyaction.org.za/map/"
+    src="https://jaysen.github.io/AgroEcology-Mapping/"
     title="Agroecology Action Collective Projects Map"
     style="width: 100%; height: 100%; border: none; display: block;"
     loading="lazy"
@@ -320,6 +352,16 @@
     </div>
 
   </section>
+
+  <script>
+    function toggleFullscreen(el) {
+      if (!document.fullscreenElement) {
+        el.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+  </script>
 
 </body>
 </html>
