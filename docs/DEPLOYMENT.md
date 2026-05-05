@@ -1,6 +1,18 @@
-# Deployment Guide - GitHub Pages
+# Deployment Guide
 
-Quick guide to deploy this project to GitHub Pages.
+## Build Targets
+
+| Target                          | Command                  | `base` path             |
+|---------------------------------|--------------------------|-------------------------|
+| Local serving / client hand-off | `npm run build`          | `./` (relative)         |
+| GitHub Pages                    | `npm run build:ghpages`  | `/AgroEcology-Mapping/` |
+| GitHub Pages + publish          | `npm run deploy`         | as above + gh-pages push|
+
+Use `npm run build` when distributing the `dist/` folder for hosting on a plain web server or iframe embed. Use `npm run deploy` to publish to GitHub Pages.
+
+---
+
+## GitHub Pages
 
 ## Prerequisites
 
@@ -73,7 +85,8 @@ After first deployment:
 4. Click **Save**
 
 Your site will be available at:
-```
+
+```text
 https://YOUR-USERNAME.github.io/YOUR-REPO-NAME/
 ```
 

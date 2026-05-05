@@ -14,8 +14,9 @@ npm run build    # Production build
 
 ## Deploy
 
-```bash
-GITHUB_PAGES=true npm run deploy
-```
+| Target                | Command           |
+|-----------------------|-------------------|
+| Local / hand-off dist | `npm run build`   |
+| GitHub Pages          | `npm run deploy`  |
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for full instructions.
