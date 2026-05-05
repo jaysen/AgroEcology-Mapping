@@ -25,11 +25,12 @@ delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({ iconUrl, iconRetinaUrl, shadowUrl });
 
 // Initialize the map centered on South Africa
-const map = L.map('map').setView([-29.0, 25.0], 6);
+const map = L.map('map', { attributionControl: false }).setView([-29.0, 25.0], 6);
+L.control.attribution({ prefix: false }).addTo(map);
 
 // Add OpenStreetMap tiles (non-GAFAM)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   maxZoom: 19,
 }).addTo(map);
 
