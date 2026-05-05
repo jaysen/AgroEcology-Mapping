@@ -329,7 +329,7 @@ footer a:hover {
 
 /* Open Street Map attribution */
 .leaflet-control-attribution {
-  font-size: x-small !important;
+  font-size: 0.7rem !important;
   opacity: 0.5 !important;
 } 
 
