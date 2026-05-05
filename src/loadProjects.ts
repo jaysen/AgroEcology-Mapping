@@ -109,7 +109,7 @@ export async function loadProjectsFromCsv(url: string, options: LoadOptions = {}
   const warn  = (msg: string) => { console.warn(`[agromap] ${msg}`);  parseErrors.push(msg); };
   const error = (msg: string) => { console.error(`[agromap] ${msg}`); parseErrors.push(msg); };
 
-  log(`Loading data from data sheet`);
+  log(`Loading data from data sheet at URL: ${url}`);
 
   // ── Fetch ─────────────────────────────────────────────────────────────────
   let text: string;
