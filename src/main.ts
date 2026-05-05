@@ -7,10 +7,7 @@ import { categoryIcons } from './icons';
 import { AgroEcologyProject } from './types';
 import './style.css';
 
-// Whether the imported dataset already has fuzzed coordinates.
-// Must stay in sync with the import above:
-//   data-fuzzed → true  (coordinates pre-fuzzed by fuzz-data.js)
-//   data-actual → false (coordinates fuzzed at runtime; shows dev origin overlay)
+// Coordinates in data.csv are pre-fuzzed — do not re-fuzz at runtime.
 const DATA_PRE_FUZZED = true;
 
 // Fix for default marker icons in Leaflet with bundlers
@@ -131,30 +128,26 @@ document.addEventListener('click', (e) => {
 });
 
 // ── Data loading ──────────────────────────────────────────────────────────────
-// VITE_DATA_URL can be:
-//   - A Google Sheets "publish to web" CSV URL  (Option 1)
-//   - A path to a static CSV served with the app (Option 2, e.g. /data.csv)
-// When unset, falls back to the bundled static dataset.
-const DATA_URL = import.meta.env.VITE_DATA_URL as string | undefined;
+// Resolution order:
+//   1. window.AGROMAP_CONFIG.dataUrl  — runtime config.js (dist hand-off / embed)
+//   2. import.meta.env.VITE_DATA_URL  — build-time env var (CI / GitHub Pages)
+//   3. bundled static dataset          — fallback
+const DATA_URL: string | undefined =
+  (window as any).AGROMAP_CONFIG?.dataUrl ||
+  (import.meta.env.VITE_DATA_URL as string | undefined);
 
-if (DATA_URL) {
-  // Runtime fetch — coordinates in the CSV are expected to be pre-fuzzed
-  // (either by Google Apps Script on the sheet, or stripped to public fields only)
+if (!DATA_URL) {
+  console.error('[agromap] No data source configured — set dataUrl in config.js or VITE_DATA_URL at build time');
+} else {
   loadProjectsFromCsv(DATA_URL).then(({ projects, skippedRows, parseErrors }) => {
     if (projects.length === 0) {
-      console.error('[agromap] No projects loaded — check VITE_DATA_URL and CSV format');
+      console.error('[agromap] No projects loaded — check data URL and CSV format');
       if (parseErrors.length) console.error('[agromap] Parse errors:', parseErrors);
       return;
     }
     if (skippedRows > 0) {
       console.warn(`[agromap] ${skippedRows} row(s) skipped during load`);
     }
-    initMarkers(projects, DATA_PRE_FUZZED);
-  });
-} else {
-  // Bundled static fallback — import at build time
-  import('./data/data-fuzzed').then(({ projects }) => {
-    console.log('[agromap] Using bundled static dataset (VITE_DATA_URL not set)');
     initMarkers(projects, DATA_PRE_FUZZED);
   });
 }
