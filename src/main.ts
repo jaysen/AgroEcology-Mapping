@@ -1,13 +1,10 @@
 import L from 'leaflet';
-// import { projects } from './data/data-fuzzed';
 import { loadProjectsFromCsv } from './loadProjects';
 import { createPopupContent } from './popup';
 import { addLegend } from './legend';
 import { fuzzLocation } from './fuzzLocation';
 import { categoryIcons } from './icons';
 import { AgroEcologyProject } from './types';
-
-import { version } from '../package.json';
 import './style.css';
 
 // Whether the imported dataset already has fuzzed coordinates.
@@ -25,11 +22,12 @@ delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({ iconUrl, iconRetinaUrl, shadowUrl });
 
 // Initialize the map centered on South Africa
-const map = L.map('map').setView([-29.0, 25.0], 6);
+const map = L.map('map', { attributionControl: false }).setView([-29.0, 25.0], 6);
+L.control.attribution({ prefix: false }).addTo(map);
 
 // Add OpenStreetMap tiles (non-GAFAM)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   maxZoom: 19,
 }).addTo(map);
 
@@ -72,21 +70,22 @@ function initMarkers(projects: AgroEcologyProject[], preFuzzed: boolean): void {
         this.openPopup();
       });
 
+      // DEBUG LABELS
+      // Show project ID and/or name as a permanent tooltip for debugging purposes, based on URL param.
       if (DEBUG_IDS) {
         marker.bindTooltip(`#${project.id}`, { permanent: true, className: 'debug-label', direction: 'top' });
       }
-
       if (DEBUG_NAMES) {
         marker.bindTooltip(`${project.name}`, { permanent: true, className: 'debug-label', direction: 'top' });
       }
-
       if (DEBUG_FULL) {
         marker.bindTooltip(`#${project.id} ${project.name}`, { permanent: true, className: 'debug-label', direction: 'top' });
       }
       
       markersAdded++;
 
-      // FUZZ DEBUG — only when data is not pre-fuzzed and running in dev.
+      // FUZZ DEBUG — only when data is not pre-fuzzed and running in dev
+      // Shows the original location and a line to the fuzzed display location, to verify that fuzzing is working and that the offset is reasonable
       if (!preFuzzed && import.meta.env.DEV) {
         const origin = project.location;
         L.circleMarker([origin.lat, origin.lng], {
@@ -103,6 +102,7 @@ function initMarkers(projects: AgroEcologyProject[], preFuzzed: boolean): void {
           opacity: 0.7,
         }).addTo(map);
       }
+
     } catch (err) {
       console.error(`[agromap] Failed to render id ${project.id} (${project.name}):`, err);
       skipped.push(project.id);
@@ -113,22 +113,11 @@ function initMarkers(projects: AgroEcologyProject[], preFuzzed: boolean): void {
     console.warn(`[agromap] ${skipped.length} project(s) not rendered: ids ${skipped.join(', ')}`);
   }
 
-  // Inject project count into footer
-  const footerEl = document.querySelector('footer p');
-  if (footerEl) {
-    footerEl.innerHTML += ` | <strong>${projects.length}</strong> projects mapped`;
-  }
-
   console.log(`[agromap] Loaded ${projects.length} projects, rendered ${markersAdded}${skipped.length ? `, skipped ${skipped.length}` : ''}`);
 }
 
 addLegend(map);
 
-// Version footer
-const footer = document.createElement('div');
-footer.className = 'app-version';
-footer.textContent = `v${version}`;
-document.getElementById('app')?.appendChild(footer);
 
 // Attribute info icon — show tooltip on click/tap (for mobile)
 document.addEventListener('click', (e) => {
