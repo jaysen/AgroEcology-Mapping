@@ -32,9 +32,13 @@ const FUZZ_MAX_KM = 2.0;  // privacy ceiling: maximum displacement
 // These columns are stripped from passthrough and replaced by fuzzed versions at the end.
 const COORD_HEADERS = new Set(['Lat', 'Lng']);
 
-// Column names used for the fuzzed output in the Public sheet.
+// Column names for fuzzed coordinates in the Data sheet (internal).
 const FUZZED_LAT_HEADER = 'Fuzzed-Lat';
 const FUZZED_LNG_HEADER = 'Fuzzed-Lng';
+
+// Column names used in the Public sheet output.
+const PUBLIC_LAT_HEADER = 'Public-Lat';
+const PUBLIC_LNG_HEADER = 'Public-Lng';
 
 // ─── Fuzzing ──────────────────────────────────────────────────────────────────
 
@@ -165,7 +169,7 @@ function buildPublicRows_(data, headers, col) {
 
   const publicHeaders = [
     ...passthroughCols.map(i => headers[i]),
-    FUZZED_LAT_HEADER, FUZZED_LNG_HEADER,
+    PUBLIC_LAT_HEADER, PUBLIC_LNG_HEADER,
   ];
 
   const rows = [publicHeaders];
