@@ -6,6 +6,9 @@ import { fuzzLocation } from './fuzzLocation';
 import { categoryIcons } from './icons';
 import { AgroEcologyProject } from './types';
 import './style.css';
+import { version } from '../package.json';
+
+console.log(`[agromap] Version: ${version}`);
 
 // Coordinates in data.csv are pre-fuzzed — do not re-fuzz at runtime.
 const DATA_PRE_FUZZED = true;
@@ -78,6 +81,11 @@ function initMarkers(projects: AgroEcologyProject[], preFuzzed: boolean): void {
       if (DEBUG_FULL) {
         marker.bindTooltip(`#${project.id} ${project.name}`, { permanent: true, className: 'debug-label', direction: 'top' });
       }
+
+      // DEBUG by project:
+      // if (project.name.toLowerCase().includes('mvume')) {
+      //   console.log(`[agromap] Debug: project with "mvume" in name: name ${project.name}, location "${project.location.lat} | ${project.location.lng}"`);
+      // }
       
       markersAdded++;
 

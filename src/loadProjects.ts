@@ -156,7 +156,7 @@ export async function loadProjectsFromCsv(url: string, options: LoadOptions = {}
   }
 
   const detectedHeaders = result.meta.fields ?? [];
-  log(`Columns detected: [${detectedHeaders.join(', ')}]`);
+  //log(`Columns detected: [${detectedHeaders.join(', ')}]`);
   log(`${rows.length} data row(s) found`);
 
   // ── Validate column presence ──────────────────────────────────────────────
