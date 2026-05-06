@@ -375,7 +375,7 @@ footer a:hover {
 
 /* Debug labels: eg ?debug=ids, ?debug=names, ?debug=full */
 .debug-label {
-  background: rgba(0,0,0,1);
+  background: rgba(0,0,0,0.5);
   color: #fff;
   border: none;
   border-radius: 3px;
