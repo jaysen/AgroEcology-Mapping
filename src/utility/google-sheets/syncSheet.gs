@@ -7,7 +7,12 @@
  *
  * Private → Public column changes:
  *   Lat, Lng  removed from their original position
- *   Lat, Lng  appended at end as fuzzed values (1–2 km annulus displacement)
+ *   Fuzzed-Lat, Fuzzed-Lng  appended at end (1–2 km annulus displacement)
+ *
+ * Idempotent fuzzing: Fuzzed-Lat / Fuzzed-Lng are stored in the Data sheet
+ * itself. On re-publish, existing fuzzed values are reused — a pin is never
+ * moved once it has been fuzzed. New rows (no fuzzed value yet) get fuzzed
+ * on first publish and written back to the Data sheet.
  *
  * SETUP:
  *   1. Private data tab must be named "Data"  (see PRIVATE_SHEET_NAME)
@@ -26,6 +31,10 @@ const FUZZ_MAX_KM = 2.0;  // privacy ceiling: maximum displacement
 
 // These columns are stripped from passthrough and replaced by fuzzed versions at the end.
 const COORD_HEADERS = new Set(['Lat', 'Lng']);
+
+// Column names used for the fuzzed output in the Public sheet.
+const FUZZED_LAT_HEADER = 'Fuzzed-Lat';
+const FUZZED_LNG_HEADER = 'Fuzzed-Lng';
 
 // ─── Fuzzing ──────────────────────────────────────────────────────────────────
 
@@ -79,42 +88,96 @@ function publishToPublicSheet() {
   if (col['Lat'] === undefined) return alert_(`Column "Lat" not found in "${PRIVATE_SHEET_NAME}".`);
   if (col['Lng'] === undefined) return alert_(`Column "Lng" not found in "${PRIVATE_SHEET_NAME}".`);
 
-  const publicRows = buildPublicRows_(privateData, headers, col);
+  // Ensure Fuzzed-Lat / Fuzzed-Lng columns exist in the Data sheet, then fuzz
+  // any rows that don't yet have values. Write-backs happen before building
+  // the public rows so privateData reflects the final fuzzed state.
+  ensureFuzzedColumnsInDataSheet_(privateSheet, privateData, headers, col);
+
+  // Re-read after potential write-back so col indices and values are current.
+  const freshData    = privateSheet.getDataRange().getValues();
+  const freshHeaders = freshData[0];
+  const freshCol     = colIndex_(freshHeaders);
+
+  const publicRows = buildPublicRows_(freshData, freshHeaders, freshCol);
 
   writePublicSheet_(publicSheet, publicRows);
 
   alert_(`✓ Published ${publicRows.length - 1} record${publicRows.length !== 2 ? 's' : ''} to "${PUBLIC_SHEET_NAME}".`);
 }
 
+// ─── Data-sheet fuzzed columns ────────────────────────────────────────────────
+
+/**
+ * Ensures Fuzzed-Lat and Fuzzed-Lng columns exist in the Data sheet.
+ * Adds them if missing, then fills any blank cells for rows that have valid
+ * Lat/Lng. Rows that already have fuzzed values are left untouched.
+ */
+function ensureFuzzedColumnsInDataSheet_(sheet, data, headers, col) {
+  let fuzzedLatCol = col[FUZZED_LAT_HEADER];
+  let fuzzedLngCol = col[FUZZED_LNG_HEADER];
+
+  // Add missing header columns at the end of the sheet.
+  const lastCol = headers.length;
+  if (fuzzedLatCol === undefined) {
+    fuzzedLatCol = lastCol;
+    sheet.getRange(1, fuzzedLatCol + 1).setValue(FUZZED_LAT_HEADER);
+  }
+  if (fuzzedLngCol === undefined) {
+    fuzzedLngCol = (fuzzedLatCol === lastCol) ? lastCol + 1 : lastCol;
+    sheet.getRange(1, fuzzedLngCol + 1).setValue(FUZZED_LNG_HEADER);
+  }
+
+  // Walk data rows and fill any that are missing fuzzed values.
+  for (let r = 1; r < data.length; r++) {
+    const row = data[r];
+    if (row.every(cell => cell === '' || cell === null || cell === undefined)) continue;
+
+    const alreadyLat = row[fuzzedLatCol];
+    const alreadyLng = row[fuzzedLngCol];
+    if (alreadyLat !== '' && alreadyLat !== null && alreadyLat !== undefined &&
+        alreadyLng !== '' && alreadyLng !== null && alreadyLng !== undefined) continue;
+
+    const lat = parseFloat(row[col['Lat']]);
+    const lng = parseFloat(row[col['Lng']]);
+    if (isNaN(lat) || isNaN(lng)) continue;
+
+    const { fuzzedLat, fuzzedLng } = fuzzCoords_(lat, lng);
+    sheet.getRange(r + 1, fuzzedLatCol + 1).setValue(fuzzedLat);
+    sheet.getRange(r + 1, fuzzedLngCol + 1).setValue(fuzzedLng);
+  }
+}
+
 // ─── Row building ─────────────────────────────────────────────────────────────
 
-function buildPublicRows_(privateData, headers, col) {
+/**
+ * Builds the public rows from the (already-fuzzed) Data sheet.
+ * Fuzzed-Lat / Fuzzed-Lng are read from the Data sheet and appended at the end.
+ * True Lat / Lng are stripped.
+ */
+function buildPublicRows_(data, headers, col) {
   const passthroughCols = headers.reduce((acc, h, i) => {
-    if (!COORD_HEADERS.has(String(h).trim())) acc.push(i);
+    const name = String(h).trim();
+    if (!COORD_HEADERS.has(name) && name !== FUZZED_LAT_HEADER && name !== FUZZED_LNG_HEADER) {
+      acc.push(i);
+    }
     return acc;
   }, []);
 
   const publicHeaders = [
     ...passthroughCols.map(i => headers[i]),
-    'Lat', 'Lng',
+    FUZZED_LAT_HEADER, FUZZED_LNG_HEADER,
   ];
 
   const rows = [publicHeaders];
 
-  for (let r = 1; r < privateData.length; r++) {
-    const row = privateData[r];
+  for (let r = 1; r < data.length; r++) {
+    const row = data[r];
     if (row.every(cell => cell === '' || cell === null || cell === undefined)) continue;
 
     const passthrough = passthroughCols.map(i => row[i]);
-    const lat         = parseFloat(row[col['Lat']]);
-    const lng         = parseFloat(row[col['Lng']]);
+    const fuzzedLat   = col[FUZZED_LAT_HEADER] !== undefined ? row[col[FUZZED_LAT_HEADER]] : '';
+    const fuzzedLng   = col[FUZZED_LNG_HEADER] !== undefined ? row[col[FUZZED_LNG_HEADER]] : '';
 
-    if (isNaN(lat) || isNaN(lng)) {
-      rows.push([...passthrough, '', '']);
-      continue;
-    }
-
-    const { fuzzedLat, fuzzedLng } = fuzzCoords_(lat, lng);
     rows.push([...passthrough, fuzzedLat, fuzzedLng]);
   }
 
