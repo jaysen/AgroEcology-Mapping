@@ -1,4 +1,4 @@
-Name,Category,Contact,Phone,Email,Province,District,NearestTown,YearStarted,HighOnFarmDiversity,MixedFarming,SeedBankIndividual,SeedBankCollective,OrganisedSeedExchange,IntegratedLandscapeManagement,OnSiteTraining,StructuredTrainingProgrammes,TrainingType,TrainingAccreditation,GSInputSupply,GSMentorshipTechSupport,GSMarketingServices,Lat,Lng
+Name,Category,Contact,Phone,Email,Province,District,NearestTown,YearStarted,HighOnFarmDiversity,MixedFarming,SeedBankIndividual,SeedBankCollective,OrganisedSeedExchange,IntegratedLandscapeManagement,OnSiteTraining,StructuredTrainingProgrammes,TrainingType,TrainingAccreditation,GSInputSupply,GSMentorshipTechSupport,GSMarketingServices,Public-Lat,Public-Lng
 Phawu Agri-Pak,LS,Bakhusele Mathupha,083 672 6206,bakhusele@saoso.org,Eastern Cape,Amathole,Butterworth,2016,Y,Y,,,,Y,Yes,,,,Y,Y,,-32.25505753,28.33131413
 Tsengiwe farm,LS,Nobahle Tsengiwe,083 662 5295,nobahle1@gmail.com,Eastern Cape,Amathole,King  Williams town,2019,,Y,Y,,,,,,,,Y,,,-32.7683229,27.13483892
 Mxumbu Youth Agricultural Coop,CC,Xolisa Dwane,072 064 5848,mxumbucentre1@gmail.com,Eastern Cape,Amathole,King William's Town,2016,,Y,,,,,Yes,Yes,S I,,Y,Y,Y,-32.87753405,27.05083937
@@ -30,7 +30,7 @@ KwaDlamini Otimati,LS,S’thandiwe Dlamini c/o Biowatch,031 206 2954,info@biowa
 Emfundweni Otimati,LS,Busisiwe Zondo c/o Biowatch,031 206 2954,info@biowatch.org.za,KwaZulu-Natal,iLembe,Maphumulo,2022,,,Y,,Yes,,Yes,Yes,S,,Y,Y,,-29.18118325,31.15105815
 Mvume Village Farming,LS,Edward Siphamandla Dludla,072 226 4620,mvumeleni.holdings@gmail.com,KwaZulu-Natal,King Cetshwayo,Mthonjaneni (Melmoth),2012,Y,,Y,,,,Yes,,,,Y,Y,,-28.55430297,31.398056
 Siyazisiza Trust,LH,Jenn Bailey,035 772 5860,Info@siyazisiza.org.za,KwaZulu-Natal,King Cetshwayo,Mtunzini,1987,Y,,Y,,,Y,Yes,Yes,L,Yes,Y,Y,Y,-28.93489103,31.68548756
-Beauty Mjoli learning site (KwaNyuswa),LS,Beauty Mjoli,078 865 6532,,KwaZulu-Natal,Ugu,Harding,2020,,,,,,,,,,,Y,,,-30.88892233,31.30781993
+Beauty Mjoli learning site (KwaNyuswa),LS,Beauty Mjoli,078 865 6532,,KwaZulu-Natal,Ugu,Harding,2020,,,,,,,,,,,Y,,,-30.66028922,30.03781993
 Ayanda Cele learning site (KwaNyuswa),LS,Ayanda Cele c/o Siyavuna,039 312 0543,philani@siyavuna.org.za,KwaZulu-Natal,Ugu,Harding,2022,,Y,,,,,,,,,Y,Y,,-30.67653556,30.0432463
 Zesizwe Dlamini learning site (KwaNyuswa),LS,Zesizwe Dlamini c/o Siyavuna,039 312 0543,philani@siyavuna.org.za,KwaZulu-Natal,Ugu,Harding,2014,,Y,,,,,,,,,Y,,,-30.6666209,30.04940662
 Lamlani Dlamini learning site (KwaNyuswa),LS,Lamlani Dlamini,063 588 7352,,KwaZulu-Natal,Ugu,Harding,2015,,Y,,,,,Yes,,,,Y,Y,,-30.66266807,30.05798743
