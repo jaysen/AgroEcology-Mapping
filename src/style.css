@@ -234,7 +234,7 @@ footer a:hover {
   font-size: 0.75rem;
   line-height: 1.35;
   width: max-content;
-  max-width: 180px;
+  max-width: min(180px, calc(100vw - 2rem));
   white-space: normal;
   pointer-events: none;
   opacity: 0;
@@ -249,9 +249,22 @@ footer a:hover {
 }
 
 .attr-info--wide::after {
-  max-width: 260px;
+  max-width: min(260px, calc(100vw - 2rem));
   left: 0;
   transform: none;
+}
+
+@media (max-width: 480px) {
+  .attr-info--wide::after {
+    position: fixed;
+    bottom: 175px;
+    top: auto;
+    left: 0.75rem;
+    right: 0.75rem;
+    width: auto;
+    max-width: none;
+    transform: none;
+  }
 }
 
 .popup-stats {
